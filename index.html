@@ -3,72 +3,271 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CFA L1 모의고사</title>
+<title>CFA L1 모의고사·노트</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--fg:#1b1f24;--mut:#6a7280;--line:#e2e5ea;--acc:#1f5fbf;--accbg:#e8f0fc;--ok:#1a7f45;--okbg:#e6f4ec;--bad:#c0362c;--badbg:#fbeceb;--flag:#b7791f;--flagbg:#fdf3e1}
-@media (prefers-color-scheme:dark){:root{--bg:#121417;--card:#1b1e23;--fg:#e8eaed;--mut:#9aa1ab;--line:#2c3138;--acc:#6ea2f0;--accbg:#1d2a3d;--ok:#5cc58a;--okbg:#17291f;--bad:#f07a70;--badbg:#33201e;--flag:#e3b35a;--flagbg:#33291a}}
+:root{
+  --bg:#eef1f6;--surface:#fff;--surface2:#f6f8fb;--ink:#0d1a2b;--ink2:#334155;--mut:#64748b;--line:#dde3eb;--line2:#e9edf3;
+  --acc:#1f4fd6;--acc-ink:#fff;--accsoft:#e6ecfc;--accline:#b8c8f5;
+  --ok:#14804a;--oksoft:#e3f4ea;--bad:#c2372c;--badsoft:#fbe9e7;--warn:#a15c07;--warnsoft:#fdf1dc;
+  --grid:rgba(31,79,214,.07);--shadow:0 1px 2px rgba(13,26,43,.05),0 4px 14px rgba(13,26,43,.05);
+  --r:14px;--nfs:16px;
+  --ff:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0b1018;--surface:#131a24;--surface2:#18202c;--ink:#e7ecf3;--ink2:#c3ccd8;--mut:#8a96a8;--line:#253041;--line2:#1d2633;
+  --acc:#7aa2ff;--acc-ink:#0b1018;--accsoft:#18233a;--accline:#2e4372;
+  --ok:#5fcf8f;--oksoft:#142a1e;--bad:#f2837a;--badsoft:#33191a;--warn:#f0b65a;--warnsoft:#2e2414;
+  --grid:rgba(122,162,255,.07);--shadow:none;
+}}
+.tp-ETH{--tc:#8b3fd9}.tp-QM{--tc:#0e8aa8}.tp-ECO{--tc:#b7791f}.tp-FSA{--tc:#1f4fd6}.tp-CI{--tc:#5b8a12}
+.tp-EQ{--tc:#d02a72}.tp-FI{--tc:#0a7e78}.tp-DER{--tc:#d4561c}.tp-ALT{--tc:#5f6b7d}.tp-PM{--tc:#11845b}.tp-X{--tc:#64748b}
+@media (prefers-color-scheme:dark){[class*="tp-"]{--tc2:color-mix(in srgb,var(--tc) 60%,#fff)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
-button{font:inherit;color:inherit}
-.wrap{max-width:720px;margin:0 auto;padding:12px 16px 120px}
-h1{font-size:20px;margin:8px 0 4px}
-.sub{color:var(--mut);font-size:13px;margin-bottom:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:10px}
-.row{display:flex;align-items:center;gap:8px}
+html{-webkit-text-size-adjust:100%}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--ff);letter-spacing:-.01em}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:8px}
+a{color:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:8px 16px 140px}
 .sp{flex:1}
-.btn{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:10px 14px;cursor:pointer;min-height:44px}
-.btn.pri{background:var(--acc);border-color:var(--acc);color:#fff}
-.btn.sm{padding:6px 10px;min-height:36px;font-size:14px}
-.btn:disabled{opacity:.4}
-.tag{font-size:12px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:1px 6px}
-.ex-title{font-weight:600}
-.ex-meta{font-size:13px;color:var(--mut);margin-top:2px}
-.ex-btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 16px}
-.bar .in{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:8px}
-.timer{font-variant-numeric:tabular-nums;font-weight:600}
-.timer.low{color:var(--bad)}
-.qno{font-weight:600}
+.row{display:flex;align-items:center;gap:8px}
+.mut{color:var(--mut)}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono)}
+
+/* app header */
+.apphead{padding:calc(14px + env(safe-area-inset-top)) 16px 4px;max-width:760px;margin:0 auto}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--mut)}
+.h1{font-size:26px;line-height:1.25;font-weight:750;letter-spacing:-.03em;margin:2px 0 4px}
+.lead{color:var(--mut);font-size:14px;margin:0 0 14px}
+
+/* tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:saturate(1.6) blur(14px);-webkit-backdrop-filter:saturate(1.6) blur(14px);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+.tabbar .in{max-width:520px;margin:0 auto;display:flex}
+.tab{flex:1;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;font-size:11px;font-weight:600;color:var(--mut);border-radius:10px}
+.tab svg{width:24px;height:24px}
+.tab.on{color:var(--acc)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:10px 16px;min-height:44px;font-weight:600;font-size:15px;color:var(--ink)}
+.btn:active{transform:scale(.98)}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.btn.soft{background:var(--accsoft);border-color:transparent;color:var(--acc)}
+.btn.ghost{background:none;border-color:transparent}
+.btn.sm{padding:6px 12px;min-height:36px;font-size:14px;border-radius:9px}
+.btn.icon{width:40px;height:40px;min-height:40px;padding:0;border-radius:10px}
+.btn.icon svg{width:20px;height:20px}
+.btn:disabled{opacity:.4;pointer-events:none}
+.btn.block{width:100%}
+
+/* cards */
+.card{background:var(--surface);border:1px solid var(--line2);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.sect-t{display:flex;align-items:baseline;gap:8px;margin:22px 2px 10px;font-size:13px;font-weight:700;color:var(--ink2);letter-spacing:.01em}
+.sect-t .mut{font-weight:500}
+
+/* exam list */
+.exam{display:flex;flex-direction:column;gap:12px}
+.exam .top{display:flex;align-items:flex-start;gap:12px}
+.exam .t{font-weight:700;font-size:16px}
+.exam .m{font-size:13px;color:var(--mut);margin-top:2px}
+.exam .btns{display:flex;gap:8px;flex-wrap:wrap}
+.exam .btns .btn{flex:1;min-width:120px}
+.score{min-width:58px;text-align:right}
+.score b{display:block;font-size:20px;line-height:1.1;font-variant-numeric:tabular-nums}
+.score span{font-size:11px;color:var(--mut)}
+.prog{height:6px;background:var(--line2);border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--acc);border-radius:99px}
+.hero{background:linear-gradient(135deg,var(--acc),color-mix(in srgb,var(--acc) 70%,#0d1a2b));color:#fff;border:0}
+@media (prefers-color-scheme:dark){.hero{background:linear-gradient(135deg,#21407f,#152a52)}}
+.hero .m{color:rgba(255,255,255,.78)}
+.hero .btn.pri{background:#fff;color:#1f4fd6;border-color:#fff}
+
+/* weak subjects */
+.weak{display:grid;gap:2px}
+.weak a{display:grid;grid-template-columns:10px 1fr 90px 44px 16px;align-items:center;gap:10px;padding:9px 4px;text-decoration:none;border-radius:8px}
+.weak a:hover{background:var(--surface2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--tc2,var(--tc))}
+.weak .bar{height:6px;border-radius:99px;background:var(--line2);overflow:hidden}
+.weak .bar i{display:block;height:100%;background:var(--tc2,var(--tc))}
+.weak .p{text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.chev{width:16px;height:16px;color:var(--mut)}
+
+/* top bar (exam, note) */
+.bar{position:sticky;top:0;z-index:15;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:calc(8px + env(safe-area-inset-top)) 12px 8px}
+.bar .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:6px}
+.bar .ttl{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:15px;padding:4px 10px;border-radius:8px;background:var(--surface)}
+.timer.low{color:var(--bad);background:var(--badsoft)}
+.qno{font-weight:700;font-variant-numeric:tabular-nums}
+.pbar{height:3px;background:var(--line2);position:absolute;left:0;right:0;bottom:-1px}
+.pbar i{display:block;height:100%;background:var(--acc);transition:width .25s}
+
+/* question */
+.stem{font-size:16px;line-height:1.7}
 .stem p{margin:0 0 10px}
 .stem table,.fb table{border-collapse:collapse;margin:4px 0 12px;font-size:14px;display:block;overflow-x:auto;max-width:100%}
-.stem td,.fb td{border-bottom:1px solid var(--line);padding:4px 10px 4px 0;white-space:nowrap;font-variant-numeric:tabular-nums}
-.opt{display:flex;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:12px;margin:8px 0;cursor:pointer;min-height:48px}
-.opt .k{font-weight:700;min-width:18px}
-.opt.sel{border-color:var(--acc);background:var(--accbg)}
-.opt.ok{border-color:var(--ok);background:var(--okbg)}
-.opt.bad{border-color:var(--bad);background:var(--badbg)}
-.fb{font-size:14px;color:var(--fg);border-left:3px solid var(--line);padding:4px 0 4px 10px;margin:-2px 0 10px 4px}
+.stem td,.fb td{border-bottom:1px solid var(--line);padding:5px 12px 5px 0;white-space:nowrap;font-variant-numeric:tabular-nums}
+.opt{display:flex;gap:12px;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:13px 14px;margin:8px 0;min-height:52px;font-size:15px;line-height:1.55;align-items:flex-start}
+.opt .k{flex:none;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-weight:700;font-size:13px;background:var(--surface2);border:1px solid var(--line)}
+.opt.sel{border-color:var(--acc);background:var(--accsoft)}.opt.sel .k{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.opt.ok{border-color:var(--ok);background:var(--oksoft)}.opt.ok .k{background:var(--ok);color:#fff;border-color:var(--ok)}
+.opt.bad{border-color:var(--bad);background:var(--badsoft)}.opt.bad .k{background:var(--bad);color:#fff;border-color:var(--bad)}
+.fb{font-size:14px;border-left:3px solid var(--line);padding:4px 0 4px 12px;margin:-2px 0 12px 6px;color:var(--ink2)}
 .fb.ok{border-color:var(--ok)}
-.fb .h{font-weight:600;font-size:13px;margin-bottom:2px}
+.fb .h{font-weight:700;font-size:12px;margin-bottom:2px;color:var(--mut)}
 .fb p{margin:0 0 6px}
-.nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:6}
-.nav .in{max-width:720px;margin:0 auto;display:flex;gap:8px}
-.nav .btn{flex:1}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px}
-.cell{border:1px solid var(--line);border-radius:6px;background:var(--card);height:40px;font-size:14px;cursor:pointer;position:relative}
-.cell.ans{background:var(--accbg);border-color:var(--acc)}
-.cell.cur{outline:2px solid var(--fg)}
-.cell.ok{background:var(--okbg);border-color:var(--ok)}
-.cell.bad{background:var(--badbg);border-color:var(--bad)}
-.cell.fl::after{content:"";position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--flag)}
-.sheet{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:10;display:flex;align-items:flex-end}
-.sheet .pane{background:var(--bg);width:100%;max-height:80vh;overflow:auto;border-radius:14px 14px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
-.sheet .pane .in{max-width:720px;margin:0 auto}
-table.t{width:100%;border-collapse:collapse;font-size:14px}
-table.t th,table.t td{padding:7px 4px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
-table.t th:first-child,table.t td:first-child{text-align:left}
-table.t th{color:var(--mut);font-weight:500;font-size:12px}
-.big{font-size:32px;font-weight:700}
+.verdict{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.verdict b{font-size:15px}
 .ok-t{color:var(--ok)}.bad-t{color:var(--bad)}
-.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.seg button{flex:1;border:0;background:var(--card);padding:8px;min-height:40px;cursor:pointer;font-size:14px}
-.seg button.on{background:var(--acc);color:#fff}
-.flagbtn.on{color:var(--flag);border-color:var(--flag);background:var(--flagbg)}
+
+/* bottom action */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:16;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.nav .in{max-width:760px;margin:0 auto;display:flex;gap:8px}
+.nav .btn{flex:1}
+
+/* grid sheet */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:6px}
+.cell{border:1px solid var(--line);border-radius:9px;background:var(--surface);height:42px;font-size:14px;font-weight:600;position:relative;font-variant-numeric:tabular-nums}
+.cell.ans{background:var(--accsoft);border-color:var(--accline);color:var(--acc)}
+.cell.cur{outline:2px solid var(--ink);outline-offset:1px}
+.cell.ok{background:var(--oksoft);border-color:var(--ok);color:var(--ok)}
+.cell.bad{background:var(--badsoft);border-color:var(--bad);color:var(--bad)}
+.cell.fl::after{content:"";position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--warn)}
+.sheet{position:fixed;inset:0;background:rgba(5,10,20,.45);z-index:30;display:flex;align-items:flex-end;animation:fade .15s}
+.sheet .pane{background:var(--bg);width:100%;max-height:82vh;overflow:auto;border-radius:20px 20px 0 0;padding:10px 16px calc(16px + env(safe-area-inset-bottom));animation:up .2s cubic-bezier(.2,.8,.2,1)}
+.sheet .pane .in{max-width:760px;margin:0 auto}
+.grab{width:40px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 12px}
+@keyframes up{from{transform:translateY(30px);opacity:.4}}
+@keyframes fade{from{opacity:0}}
+
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+table.t th,table.t td{padding:9px 4px;border-bottom:1px solid var(--line2);text-align:right;font-variant-numeric:tabular-nums}
+table.t th:first-child,table.t td:first-child{text-align:left}
+table.t th{color:var(--mut);font-weight:600;font-size:12px}
+table.t a{color:var(--acc);text-decoration:none;font-weight:600;font-size:13px}
+.big{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.seg{display:flex;background:var(--surface2);border:1px solid var(--line2);border-radius:11px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:none;padding:7px;min-height:36px;font-size:14px;font-weight:600;border-radius:8px;color:var(--mut)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.flagbtn.on{color:var(--warn);border-color:var(--warn);background:var(--warnsoft)}
 .note{font-size:13px;color:var(--mut)}
-textarea{width:100%;font:13px/1.4 ui-monospace,monospace;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--card);color:var(--fg)}
+textarea{width:100%;font:13px/1.45 var(--mono);border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface2);color:var(--ink)}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--ink2);background:var(--surface2);border:1px solid var(--line2);border-radius:99px;padding:2px 9px;text-decoration:none;white-space:nowrap}
+a.tag{color:var(--tc2,var(--tc))}
+
+/* ---------- notes ---------- */
+.search{position:sticky;top:0;z-index:12;background:var(--bg);padding:calc(8px + env(safe-area-inset-top)) 0 8px;margin:0 -16px;padding-left:16px;padding-right:16px}
+.sbox{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 12px;height:46px}
+.sbox:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px var(--accsoft)}
+.sbox svg{width:18px;height:18px;color:var(--mut);flex:none}
+.sbox input{flex:1;border:0;outline:0;background:none;height:100%;font-size:16px;min-width:0}
+.sbox .x{border:0;background:var(--line2);width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;color:var(--mut)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 16px 4px;margin:0 -16px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--ink2);min-height:34px}
+.chip .c{font-weight:500;color:var(--mut);font-variant-numeric:tabular-nums;font-size:12px}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.chip.on .c{color:inherit;opacity:.7}
+.cont{display:flex;align-items:center;gap:12px;text-decoration:none;padding:14px 16px}
+.cont .ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:var(--accsoft);color:var(--acc);flex:none}
+.cont .ic svg{width:20px;height:20px}
+.glist{background:var(--surface);border:1px solid var(--line2);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.ghead{display:flex;align-items:center;gap:10px;margin:22px 2px 8px}
+.ghead .n{font-weight:750;font-size:15px}
+.ghead .prog{flex:1;max-width:120px;margin-left:auto}
+.ghead .prog i{background:var(--tc2,var(--tc))}
+.ghead .c{font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+.item{display:flex;align-items:center;gap:12px;padding:12px 14px;text-decoration:none;border-top:1px solid var(--line2);position:relative}
+.item:first-child{border-top:0}
+.item:active{background:var(--surface2)}
+.rno{flex:none;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font:700 13px/1 var(--mono);color:var(--tc2,var(--tc));background:color-mix(in srgb,var(--tc) 11%,transparent)}
+.item .tx{flex:1;min-width:0}
+.item .k{font-weight:650;font-size:15px;line-height:1.35}
+.item .e{font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .snip{font-size:13px;color:var(--ink2);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.item .st{display:flex;gap:4px;align-items:center;color:var(--mut)}
+.item .st svg{width:18px;height:18px}
+.item .st .rd{color:var(--ok)}
+.item .st .sv{color:var(--warn)}
+mark{background:color-mix(in srgb,var(--acc) 22%,transparent);color:inherit;border-radius:3px;padding:0 1px}
+.empty{text-align:center;padding:48px 16px;color:var(--mut)}
+.empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+.skel{height:64px;border-radius:12px;background:linear-gradient(90deg,var(--line2),var(--surface2),var(--line2));background-size:200% 100%;animation:sh 1.2s infinite;margin-bottom:8px}
+@keyframes sh{to{background-position:-200% 0}}
+
+/* note reader */
+.nhead{padding:18px 0 6px}
+.nhead .ey{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--tc2,var(--tc));letter-spacing:.02em}
+.nhead h1{font-size:25px;line-height:1.3;letter-spacing:-.03em;margin:6px 0 2px;font-weight:780}
+.nhead .en{font-size:14px;color:var(--mut)}
+.gist{margin:16px 0 4px;padding:14px 16px;border-radius:var(--r);background:color-mix(in srgb,var(--tc) 8%,var(--surface));border:1px solid color-mix(in srgb,var(--tc) 22%,transparent);font-size:var(--nfs);line-height:1.7}
+.gist .l{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--tc2,var(--tc));margin-bottom:4px}
+.jump{position:sticky;top:calc(57px + env(safe-area-inset-top));z-index:14;background:var(--bg);margin:0 -16px;padding:8px 16px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid transparent}
+.jump::-webkit-scrollbar{display:none}
+.jump.stuck{border-bottom-color:var(--line)}
+.jump a{flex:none;text-decoration:none;font-size:13px;font-weight:600;color:var(--mut);padding:6px 11px;border-radius:99px;border:1px solid var(--line);background:var(--surface)}
+.jump a.on{color:var(--acc-ink);background:var(--acc);border-color:var(--acc)}
+.nsec{scroll-margin-top:calc(110px + env(safe-area-inset-top));margin-top:26px}
+.nsec>h2{font-size:13px;font-weight:800;letter-spacing:.06em;color:var(--mut);margin:0 2px 10px;display:flex;align-items:center;gap:8px}
+.nsec>h2 .c{font-weight:600;letter-spacing:0;font-size:12px}
+.prose{font-size:var(--nfs);line-height:1.75;color:var(--ink)}
+.prose h3{font-size:calc(var(--nfs) + 1px);font-weight:750;margin:0 0 8px;letter-spacing:-.02em}
+.prose ul{margin:0;padding:0;list-style:none}
+.prose li{position:relative;padding-left:16px;margin:0 0 7px}
+.prose li::before{content:"";position:absolute;left:3px;top:.72em;width:5px;height:5px;border-radius:50%;background:var(--tc2,var(--tc))}
+.prose code,.fxd code{font-family:var(--mono);font-size:.9em;background:var(--surface2);border:1px solid var(--line2);padding:0 4px;border-radius:5px}
+.los li{display:flex;gap:10px;padding:0;margin:0 0 9px}
+.los li::before{display:none}
+.los .lc{flex:none;font:700 12px/1 var(--mono);color:var(--tc2,var(--tc));background:color-mix(in srgb,var(--tc) 10%,transparent);border-radius:6px;padding:5px 6px;height:fit-content;margin-top:.15em;min-width:38px;text-align:center}
+.blk{background:var(--surface);border:1px solid var(--line2);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--shadow)}
+
+/* formula: graph-paper card */
+.fx{border-radius:var(--r);border:1px solid var(--line2);background:var(--surface);overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow)}
+.fx .fxn{display:flex;align-items:center;gap:8px;padding:11px 14px 0;font-size:13px;font-weight:700;color:var(--ink2)}
+.fx .fxf{margin:9px 14px;padding:14px;border-radius:10px;font:600 15px/1.6 var(--mono);color:var(--ink);overflow-x:auto;white-space:pre-wrap;word-break:break-word;
+  background-color:var(--surface2);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:14px 14px;border:1px solid var(--line2);border-left:3px solid var(--tc2,var(--tc))}
+.fx .fxd{padding:0 14px 12px;font-size:14px;color:var(--ink2);line-height:1.6}
+.fx .fxr{display:flex;align-items:center;gap:6px;padding:9px 14px;border-top:1px solid var(--line2);font-size:12px;color:var(--mut);text-decoration:none}
+.fx .fxr:hover{color:var(--acc)}
+.fx .cp{margin-left:auto;border:0;background:none;color:var(--mut);padding:4px;border-radius:6px;display:grid}
+.fx .cp svg{width:16px;height:16px}
+
+.trap{display:flex;gap:12px;padding:13px 14px;border-radius:12px;background:var(--warnsoft);margin-bottom:8px;font-size:var(--nfs);line-height:1.65}
+.trap .i{flex:none;width:22px;height:22px;border-radius:7px;background:var(--warn);color:var(--surface);display:grid;place-items:center;font:800 12px/1 var(--ff);margin-top:.15em}
+.terms{display:grid;gap:0}
+.term{display:grid;grid-template-columns:minmax(120px,38%) 1fr;gap:12px;padding:10px 0;border-top:1px solid var(--line2);font-size:14px;line-height:1.55}
+.term:first-child{border-top:0}
+.term .en{font-weight:650;color:var(--ink)}
+.term .ko{color:var(--ink2)}
+@media (max-width:420px){.term{grid-template-columns:1fr;gap:2px}}
+.qa{border:1px solid var(--line2);background:var(--surface);border-radius:12px;margin-bottom:8px;overflow:hidden;box-shadow:var(--shadow)}
+.qa summary{list-style:none;display:flex;gap:10px;padding:13px 14px;font-weight:650;font-size:var(--nfs);line-height:1.55;cursor:pointer}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary .q{flex:none;font:800 13px/1 var(--mono);color:var(--acc);margin-top:.3em}
+.qa summary .hint{margin-left:auto;flex:none;font-size:12px;font-weight:600;color:var(--acc);background:var(--accsoft);border-radius:99px;padding:2px 9px;height:fit-content;margin-top:.15em}
+.qa[open] summary .hint{display:none}
+.qa .a{padding:0 14px 14px 37px;font-size:calc(var(--nfs) - 1px);color:var(--ink2);line-height:1.65;animation:fade .2s}
+.done{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:28px;min-height:52px;border-radius:14px;border:1.5px dashed var(--line);background:none;font-weight:700;font-size:15px;color:var(--ink2)}
+.done svg{width:20px;height:20px}
+.done.on{border-style:solid;border-color:var(--ok);background:var(--oksoft);color:var(--ok)}
+.pn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.pn a{display:block;text-decoration:none;padding:12px 14px;border:1px solid var(--line2);background:var(--surface);border-radius:12px;min-width:0}
+.pn a .d{font-size:11px;font-weight:700;color:var(--mut)}
+.pn a .k{font-size:14px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pn a.nx{text-align:right}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;font-weight:600;z-index:50;animation:up .2s;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.fsz{display:flex;gap:4px;align-items:center}
+.fsz button{border:1px solid var(--line);background:var(--surface);border-radius:9px;width:36px;height:36px;font-weight:700}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (min-width:700px){.h1{font-size:30px}.nhead h1{font-size:30px}}
+
 </style>
-<meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#121417" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eef1f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1018" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -85,6 +284,8 @@ textarea{width:100%;font:13px/1.4 ui-monospace,monospace;border:1px solid var(--
 const D = JSON.parse(document.getElementById('data').textContent);
 const TP = JSON.parse(document.getElementById('topics').textContent);
 const TN = {ETH:'윤리',QM:'계량',ECO:'경제',FSA:'재무제표',CI:'기업이슈',EQ:'주식',FI:'채권',DER:'파생',ALT:'대체투자',PM:'포트폴리오',X:'미분류'};
+const TFULL = {ETH:'윤리·전문가 기준',QM:'계량 방법론',ECO:'경제학',CI:'기업 이슈',FSA:'재무제표 분석',EQ:'주식',FI:'채권',DER:'파생상품',ALT:'대체투자',PM:'포트폴리오 관리'};
+const TORDER = ['QM','ECO','CI','FSA','EQ','FI','DER','ALT','PM','ETH'];
 const EXAMS = [['ME3-1','모의고사 3회 1부'],['ME3-2','모의고사 3회 2부'],['ME4-1','모의고사 4회 1부'],['ME4-2','모의고사 4회 2부'],['ME5-1','모의고사 5회 1부'],['ME5-2','모의고사 5회 2부']];
 const LIMIT = 135*60;
 const $ = s => document.querySelector(s);
@@ -93,7 +294,25 @@ const hasKey = id => D[id].some(q => q.a);
 const topic = (id, n) => TP[id + '#' + n] || 'X';
 function load(k, d){ try { const v = localStorage.getItem('cfa:' + k); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
 function save(k, v){ try { localStorage.setItem('cfa:' + k, JSON.stringify(v)); } catch(e){} }
+function drop(k){ try { localStorage.removeItem('cfa:' + k); } catch(e){} }
 
+const I = {
+  exam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M9 8h7"/></svg>',
+  fx:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 7h8M8 11h2M14 11h2M8 15h2M14 15h2M8 18h2M14 18h2"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  chev:'<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>',
+  starOn:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  circle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/></svg>',
+  copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></svg>',
+  resume:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M10 7.5l4 3-4 3z" fill="currentColor"/></svg>',
+  grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg>',
+  flag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 21V4M6 4h11l-2.5 4L17 12H6"/></svg>',
+};
+function toast(t){ const o = $('.toast'); o && o.remove(); const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 1800); }
 function rich(t){
   const out = []; let tb = null;
   for (const l of String(t).split('\n')){
@@ -106,39 +325,86 @@ function rich(t){
 }
 function fmt(s){ s = Math.max(0, Math.round(s)); const h = Math.floor(s/3600), m = Math.floor(s%3600/60), x = s%60; return (h ? h + ':' : '') + String(m).padStart(h?2:1,'0') + ':' + String(x).padStart(2,'0'); }
 
-let S = null, timerH = null;  // current session state
+/* ---------- router ---------- */
+let S = null, timerH = null, R = null;
+function nav(h){ if (location.hash === h) route(); else location.hash = h; }
+function parts(){ return location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent); }
+function route(){
+  const p = parts(), v = p[0] || '';
+  if (S && v !== 'exam'){ persist(); stopTimer(); S = null; }
+  document.body.classList.remove('reading');
+  if (v === 'exam'){ if (S) return render(); return nav('#/'); }
+  stopTimer();
+  if (v === 'result') return showResult(p[1], +p[2], p[3]);
+  if (v === 'review') return review(p[1], +p[2], +p[3], p[4]);
+  if (v === 'notes') return notesList(p[1] || 'all');
+  if (v === 'note') return noteView(+p[1]);
+  if (v === 'fx') return fxList(p[1] || 'all');
+  return home();
+}
+addEventListener('hashchange', route);
+function tabbar(on){
+  const t = (k, h, label, ic) => `<button class="tab ${on===k?'on':''}" onclick="nav('${h}')" aria-current="${on===k?'page':'false'}">${ic}<span>${label}</span></button>`;
+  return `<nav class="tabbar"><div class="in">${t('exam','#/','모의고사',I.exam)}${t('notes','#/notes','요약 노트',I.book)}${t('fx','#/fx','공식집',I.fx)}</div></nav>`;
+}
+function paint(html, keepScroll){ $('#app').innerHTML = html; if (!keepScroll) scrollTo(0, 0); }
 
+/* ---------- exam home ---------- */
+function topicStats(){
+  const by = {};
+  EXAMS.forEach(([id]) => {
+    if (!hasKey(id)) return;
+    load('hist:' + id, []).forEach(h => {
+      const list = h.only ? D[id].filter(q => h.only.includes(q.n)) : D[id];
+      list.forEach(q => { const t = topic(id, q.n); if (t === 'X') return; by[t] = by[t] || {n:0, ok:0}; by[t].n++; if (h.ans[q.n] === q.a) by[t].ok++; });
+    });
+  });
+  return by;
+}
 function home(){
   stopTimer(); S = null;
+  let resumeId = null;
   const rows = EXAMS.map(([id, name]) => {
-    const cur = load('cur:' + id, null), hist = load('hist:' + id, []);
-    const key = hasKey(id);
+    const cur = load('cur:' + id, null), hist = load('hist:' + id, []), key = hasKey(id);
+    if (cur && !resumeId) resumeId = id;
     let meta = D[id].length + '문제 · 135분' + (key ? '' : ' · 정답표 없음');
-    if (hist.length){ const h = hist[hist.length-1]; meta += ' · 최근 ' + (key ? h.score + '/' + h.total + ' (' + Math.round(h.score/h.total*100) + '%)' : '제출함') + ' ' + h.date; }
+    let score = '';
+    if (hist.length){
+      const h = hist[hist.length-1];
+      score = key ? `<div class="score"><b>${Math.round(h.score/h.total*100)}%</b><span>최근 ${h.date}</span></div>` : `<div class="score"><b>제출</b><span>${h.date}</span></div>`;
+    }
+    const prog = cur ? `<div class="prog" aria-label="진행률"><i style="width:${Object.keys(cur.ans).length/D[id].length*100}%"></i></div>` : '';
     const btns = cur
-      ? `<button class="btn pri" onclick="resume('${id}')">이어 풀기 (${Object.keys(cur.ans).length}/${D[id].length})</button><button class="btn" onclick="discard('${id}')">처음부터</button>`
+      ? `<button class="btn pri" onclick="resume('${id}')">이어 풀기 ${Object.keys(cur.ans).length}/${D[id].length}</button><button class="btn" onclick="discard('${id}')">처음부터</button>`
       : `<button class="btn pri" onclick="start('${id}','exam')">실전 모드</button><button class="btn" onclick="start('${id}','practice')">연습 모드</button>`;
-    const last = hist.length ? `<button class="btn" onclick="showResult('${id}',${hist.length-1})">지난 결과</button>` : '';
-    return `<div class="card"><div class="ex-title">${name}</div><div class="ex-meta">${meta}</div><div class="ex-btns">${btns}${last}</div></div>`;
+    const last = hist.length ? `<button class="btn ghost sm" onclick="nav('#/result/${id}/${hist.length-1}')">지난 결과 보기</button>` : '';
+    return `<div class="card exam"><div class="top"><div class="sp"><div class="t">${name}</div><div class="m">${meta}${cur ? ' · ' + (cur.mode==='exam'?'실전':'연습') + ' 진행 중' : ''}</div></div>${score}</div>${prog}<div class="btns">${btns}</div>${last ? `<div>${last}</div>` : ''}</div>`;
   }).join('');
-  $('#app').innerHTML = `<div class="wrap"><h1>CFA Level I 모의고사</h1>
-  <div class="sub">실전 모드: 135분 타이머, 제출 후 채점·해설 / 연습 모드: 한 문제씩 바로 정답·해설</div>${rows}
-  <div class="note">기록은 이 기기 브라우저에만 저장됨. 5회는 정답표가 없어 답만 기록됨(결과 화면에서 복사해 Claude에 보내면 채점).</div></div>`;
-  scrollTo(0,0);
+  const by = topicStats(), ts = TORDER.filter(t => by[t]);
+  let weak = '';
+  if (ts.length){
+    ts.sort((a, b) => by[a].ok/by[a].n - by[b].ok/by[b].n);
+    weak = `<div class="sect-t">과목별 정답률<span class="mut">· 낮은 순, 누르면 노트로</span></div><div class="card weak">${ts.map(t => { const p = Math.round(by[t].ok/by[t].n*100); return `<a href="#/notes/${t}" class="tp-${t}"><span class="dot"></span><span>${TN[t]}</span><span class="bar"><i style="width:${p}%"></i></span><span class="p ${p<50?'bad-t':p>=70?'ok-t':''}">${p}%</span>${I.chev}</a>`; }).join('')}</div>`;
+  }
+  const lastNote = load('nlast', null);
+  const hero = resumeId
+    ? (() => { const c = load('cur:' + resumeId); const nm = EXAMS.find(e => e[0] === resumeId)[1]; return `<div class="card hero exam"><div><div class="t">${nm} 이어서</div><div class="m">${Object.keys(c.ans).length}/${D[resumeId].length}문제 풀었음 · ${fmt(c.used)} 사용</div></div><div class="btns"><button class="btn pri" onclick="resume('${resumeId}')">이어 풀기</button></div></div>`; })()
+    : '';
+  paint(`<header class="apphead"><div class="eyebrow">CFA LEVEL I · 2026</div><div class="h1">모의고사</div><p class="lead">실전 모드는 135분 타이머 후 채점, 연습 모드는 한 문제씩 바로 해설.</p></header>
+  <div class="wrap">${hero}${weak}<div class="sect-t">회차</div>${rows}
+  ${lastNote ? `<a class="card cont" href="#/note/${lastNote}"><span class="ic">${I.resume}</span><span class="sp"><span class="eyebrow">요약 노트 이어 읽기</span><br><b>R${lastNote}</b> <span class="mut" data-ntitle="${lastNote}"></span></span>${I.chev}</a>` : ''}
+  <p class="note">기록은 이 기기 브라우저에만 저장됨. 5회는 정답표가 없어 답만 기록됨(결과 화면에서 복사해 Claude에 보내면 채점).</p></div>${tabbar('exam')}`);
+  if (lastNote) withNotes(() => { const el = document.querySelector('[data-ntitle]'); const n = noteBy(lastNote); if (el && n) el.textContent = n.k; });
 }
-function discard(id){ if (confirm('진행 중인 기록을 지우고 처음부터 시작할까요?')){ save('cur:' + id, null); try{localStorage.removeItem('cfa:cur:' + id);}catch(e){} home(); } }
-function start(id, mode, only){
-  S = {id, mode, ans:{}, flag:{}, used:0, i:0, only: only || null};
-  persist(); render();
-}
-function resume(id){ S = load('cur:' + id, null); if (!S) return home(); render(); }
+function discard(id){ if (confirm('진행 중인 기록을 지우고 처음부터 시작할까요?')){ drop('cur:' + id); home(); } }
+function start(id, mode, only){ S = {id, mode, ans:{}, flag:{}, used:0, i:0, only: only || null}; persist(); nav('#/exam'); }
+function resume(id){ S = load('cur:' + id, null); if (!S) return home(); nav('#/exam'); }
 function persist(){ if (S) save('cur:' + S.id, S); }
 function qs(){ const all = D[S.id]; return S.only ? all.filter(q => S.only.includes(q.n)) : all; }
-
 function startTimer(){
   stopTimer(); let t0 = Date.now();
   timerH = setInterval(() => {
-    const now = Date.now(); if (document.hidden){ t0 = now; return; }
+    const now = Date.now(); if (document.hidden || !S){ t0 = now; return; }
     S.used += (now - t0)/1000; t0 = now; paintTimer();
     if (Math.floor(S.used) % 5 === 0) persist();
     if (S.mode === 'exam' && S.used >= LIMIT){ stopTimer(); alert('시간 종료. 자동 제출합니다.'); submit(true); }
@@ -146,12 +412,11 @@ function startTimer(){
 }
 function stopTimer(){ if (timerH) clearInterval(timerH); timerH = null; }
 function paintTimer(){
-  const el = $('#tm'); if (!el) return;
+  const el = $('#tm'); if (!el || !S) return;
   const left = LIMIT * (qs().length / D[S.id].length) - S.used;
   el.textContent = S.mode === 'exam' ? fmt(left) : fmt(S.used);
   el.classList.toggle('low', S.mode === 'exam' && left < 600);
 }
-
 function render(){
   const list = qs(), q = list[S.i], id = S.id, key = hasKey(id);
   const chosen = S.ans[q.n], reveal = S.mode === 'practice' && chosen && key;
@@ -163,21 +428,22 @@ function render(){
     if (reveal && q.f && q.f[k]) fb = `<div class="fb ${k===q.a?'ok':''}"><div class="h">${k===q.a?'정답 해설':k+' 오답 이유'}</div>${rich(q.f[k])}</div>`;
     return `<button class="${c}" onclick="pick('${k}')"><span class="k">${k}</span><span>${esc(q.o[k] || '')}</span></button>${fb}`;
   }).join('');
-  const res = reveal ? `<div class="card" style="padding:10px 14px"><b class="${chosen===q.a?'ok-t':'bad-t'}">${chosen===q.a?'정답':'오답 · 정답 '+q.a}</b> <span class="tag">${TN[topic(id,q.n)]}</span></div>` : '';
+  const t = topic(id, q.n);
+  const res = reveal ? `<div class="card verdict"><b class="${chosen===q.a?'ok-t':'bad-t'}">${chosen===q.a?'정답':'오답 · 정답 '+q.a}</b><span class="sp"></span><a class="tag tp-${t}" href="#/notes/${t}">${TN[t]} 노트 보기 ›</a></div>` : '';
   const answered = list.filter(x => S.ans[x.n]).length;
-  $('#app').innerHTML = `<div class="bar"><div class="in">
-    <button class="btn sm" onclick="leave()">나가기</button>
-    <span class="qno">${S.i+1}<span class="note"> / ${list.length}</span></span>
+  paint(`<div class="bar"><div class="in">
+    <button class="btn icon ghost" onclick="leave()" aria-label="나가기">${I.back}</button>
+    <span class="qno">${S.i+1}<span class="mut" style="font-weight:500"> / ${list.length}</span></span>
     <span class="sp"></span><span class="timer" id="tm"></span>
-    <button class="btn sm flagbtn ${S.flag[q.n]?'on':''}" onclick="toggleFlag()">표시</button>
-    <button class="btn sm" onclick="openGrid()">목록 ${answered}</button>
-  </div></div>
-  <div class="wrap">${res}<div class="card"><div class="note" style="margin-bottom:6px">Q${q.n}${S.mode==='practice'&&!reveal?'':''}</div><div class="stem">${rich(q.q)}</div></div>${opts}</div>
+    <button class="btn icon flagbtn ${S.flag[q.n]?'on':''}" onclick="toggleFlag()" aria-label="표시">${I.flag}</button>
+    <button class="btn sm" onclick="openGrid()">${I.grid.replace('<svg','<svg width="16" height="16"')} ${answered}</button>
+  </div><div class="pbar"><i style="width:${answered/list.length*100}%"></i></div></div>
+  <div class="wrap" style="padding-top:14px">${res}<div class="card"><div class="note" style="margin-bottom:8px">Q${q.n}${S.mode==='practice'?' · 연습':''}</div><div class="stem">${rich(q.q)}</div></div>${opts}</div>
   <div class="nav"><div class="in">
     <button class="btn" onclick="go(-1)" ${S.i===0?'disabled':''}>이전</button>
     ${S.i === list.length-1 ? `<button class="btn pri" onclick="submit()">제출</button>` : `<button class="btn pri" onclick="go(1)">다음</button>`}
-  </div></div>`;
-  paintTimer(); if (!timerH) startTimer(); scrollTo(0,0);
+  </div></div>`);
+  paintTimer(); if (!timerH) startTimer();
 }
 function pick(k){
   const q = qs()[S.i];
@@ -186,7 +452,7 @@ function pick(k){
 }
 function toggleFlag(){ const q = qs()[S.i]; S.flag[q.n] = !S.flag[q.n]; if (!S.flag[q.n]) delete S.flag[q.n]; persist(); const y = scrollY; render(); scrollTo(0,y); }
 function go(d){ S.i = Math.min(qs().length-1, Math.max(0, S.i + d)); persist(); render(); }
-function leave(){ persist(); home(); }
+function leave(){ persist(); nav('#/'); }
 function openGrid(){
   const list = qs(), key = hasKey(S.id);
   const cells = list.map((q, i) => {
@@ -198,12 +464,11 @@ function openGrid(){
   const un = list.length - list.filter(q => S.ans[q.n]).length;
   const d = document.createElement('div'); d.className = 'sheet'; d.id = 'sh';
   d.onclick = e => { if (e.target === d) d.remove(); };
-  d.innerHTML = `<div class="pane"><div class="in"><div class="row" style="margin-bottom:10px"><b>문제 목록</b><span class="sp"></span><span class="note">안 푼 문제 ${un} · 주황 점 = 표시</span></div><div class="grid">${cells}</div>
-  <div class="row" style="margin-top:14px"><button class="btn" style="flex:1" onclick="$('#sh').remove()">닫기</button><button class="btn pri" style="flex:1" onclick="submit()">제출</button></div></div></div>`;
+  d.innerHTML = `<div class="pane"><div class="in"><div class="grab"></div><div class="row" style="margin-bottom:12px"><b>문제 목록</b><span class="sp"></span><span class="note">안 푼 문제 ${un} · 주황 점 = 표시</span></div><div class="grid">${cells}</div>
+  <div class="row" style="margin-top:16px"><button class="btn" style="flex:1" onclick="$('#sh').remove()">닫기</button><button class="btn pri" style="flex:1" onclick="submit()">제출</button></div></div></div>`;
   document.body.appendChild(d);
 }
 function jump(i){ $('#sh') && $('#sh').remove(); S.i = i; persist(); render(); }
-
 function submit(force){
   const list = qs(), un = list.filter(q => !S.ans[q.n]).length;
   if (!force && !confirm(un ? `안 푼 문제 ${un}개가 있습니다. 제출할까요?` : '제출할까요?')) return;
@@ -213,13 +478,12 @@ function submit(force){
   const d = new Date();
   const rec = {date: (d.getMonth()+1) + '/' + d.getDate(), mode: S.mode, used: Math.round(S.used), score, total: list.length, ans: S.ans, flag: S.flag, only: S.only};
   const hist = load('hist:' + S.id, []); hist.push(rec); save('hist:' + S.id, hist);
-  try { localStorage.removeItem('cfa:cur:' + S.id); } catch(e){}
-  const id = S.id; S = null; showResult(id, hist.length - 1);
+  drop('cur:' + S.id);
+  const id = S.id; S = null; location.replace('#/result/' + id + '/' + (hist.length - 1));
 }
-
-let R = null;
 function showResult(id, hi, filter){
   stopTimer();
+  if (!D[id]) return home();
   const hist = load('hist:' + id, []), h = hist[hi]; if (!h) return home();
   R = {id, hi, filter: filter || 'all'};
   const key = hasKey(id), all = D[id], list = h.only ? all.filter(q => h.only.includes(q.n)) : all;
@@ -229,53 +493,193 @@ function showResult(id, hi, filter){
     const by = {};
     list.forEach(q => { const t = topic(id, q.n); by[t] = by[t] || {n:0, ok:0}; by[t].n++; if (h.ans[q.n] === q.a) by[t].ok++; });
     const order = Object.keys(TN).filter(t => by[t]);
-    const trs = order.map(t => { const p = Math.round(by[t].ok/by[t].n*100); return `<tr><td>${TN[t]}</td><td>${by[t].ok}/${by[t].n}</td><td class="${p>=70?'ok-t':p<50?'bad-t':''}">${p}%</td></tr>`; }).join('');
+    const trs = order.map(t => { const p = Math.round(by[t].ok/by[t].n*100); return `<tr class="tp-${t}"><td><span class="dot" style="display:inline-block;margin-right:8px"></span>${TN[t]}</td><td>${by[t].ok}/${by[t].n}</td><td class="${p>=70?'ok-t':p<50?'bad-t':''}"><b>${p}%</b></td><td>${t!=='X'?`<a href="#/notes/${t}">노트 ›</a>`:''}</td></tr>`; }).join('');
     const pct = Math.round(h.score/h.total*100);
-    top = `<div class="card"><div class="row"><div><div class="big">${h.score}<span class="note" style="font-size:16px"> / ${h.total}</span></div><div class="note">정답률 ${pct}% · 소요 ${fmt(h.used)} · ${h.mode==='exam'?'실전':'연습'} · ${h.date}</div></div></div>
-    <div class="note" style="margin-top:6px">합격선은 공개되지 않음. 모의고사 기준 70% 이상을 목표로 잡는 것이 일반적.</div></div>
-    <div class="card"><table class="t"><tr><th>과목</th><th>정답</th><th>정답률</th></tr>${trs}</table><div class="note" style="margin-top:6px">과목은 문제 내용을 보고 자동 분류함.</div></div>`;
+    top = `<div class="card"><div class="row" style="align-items:flex-end"><div><div class="eyebrow">${h.mode==='exam'?'실전':'연습'} · ${h.date}</div><div class="big">${pct}<span style="font-size:20px">%</span></div></div><span class="sp"></span><div style="text-align:right"><b class="num" style="font-size:18px">${h.score} / ${h.total}</b><div class="note">소요 ${fmt(h.used)}</div></div></div>
+    <div class="prog" style="margin-top:12px"><i style="width:${pct}%;background:${pct>=70?'var(--ok)':pct<50?'var(--bad)':'var(--acc)'}"></i></div>
+    <div class="note" style="margin-top:8px">합격선은 공개되지 않음. 모의고사 기준 70% 이상을 목표로 잡는 것이 일반적.</div></div>
+    <div class="card"><table class="t"><tr><th>과목</th><th>정답</th><th>정답률</th><th></th></tr>${trs}</table><div class="note" style="margin-top:8px">과목은 문제 내용을 보고 자동 분류함. 약한 과목은 노트로 바로 복습.</div></div>`;
   } else {
     const str = list.map(q => q.n + (h.ans[q.n] || '-')).join(' ');
-    top = `<div class="card"><b>정답표 없음</b><div class="note" style="margin:4px 0 8px">아래 답안을 복사해서 Claude에게 보내면 채점·해설함.</div><textarea rows="5" readonly onclick="this.select()">${name} 답안: ${str}</textarea><button class="btn sm" style="margin-top:6px" onclick="copyAns()">복사</button></div>`;
+    top = `<div class="card"><b>정답표 없음</b><div class="note" style="margin:4px 0 8px">아래 답안을 복사해서 Claude에게 보내면 채점·해설함.</div><textarea rows="5" readonly onclick="this.select()">${name} 답안: ${str}</textarea><button class="btn sm" style="margin-top:8px" onclick="copyAns()">복사</button></div>`;
   }
   const wrong = list.filter(q => key && h.ans[q.n] !== q.a).map(q => q.n);
   const fl = list.filter(q => h.flag && h.flag[q.n]).map(q => q.n);
   const shown = list.filter(q => R.filter === 'all' || (R.filter === 'wrong' && wrong.includes(q.n)) || (R.filter === 'flag' && fl.includes(q.n)));
-  const cells = shown.map(q => { const a = h.ans[q.n]; let c = 'cell'; if (key) c += a === q.a ? ' ok' : ' bad'; else if (a) c += ' ans'; if (h.flag && h.flag[q.n]) c += ' fl'; return `<button class="${c}" onclick="review(${q.n})">${q.n}</button>`; }).join('');
-  const retry = key && wrong.length ? `<button class="btn" onclick="retryWrong()">틀린 ${wrong.length}문제 다시 풀기</button>` : '';
-  $('#app').innerHTML = `<div class="wrap"><div class="row" style="margin:6px 0 10px"><button class="btn sm" onclick="home()">처음으로</button><span class="sp"></span><b>${name}</b></div>${top}
-  <div class="card"><div class="seg" style="margin-bottom:10px">
-    <button class="${R.filter==='all'?'on':''}" onclick="showResult('${id}',${hi},'all')">전체</button>
-    ${key?`<button class="${R.filter==='wrong'?'on':''}" onclick="showResult('${id}',${hi},'wrong')">틀린 것 ${wrong.length}</button>`:''}
-    <button class="${R.filter==='flag'?'on':''}" onclick="showResult('${id}',${hi},'flag')">표시 ${fl.length}</button></div>
+  const cells = shown.map(q => { const a = h.ans[q.n]; let c = 'cell'; if (key) c += a === q.a ? ' ok' : ' bad'; else if (a) c += ' ans'; if (h.flag && h.flag[q.n]) c += ' fl'; return `<button class="${c}" onclick="nav('#/review/${id}/${hi}/${q.n}/${R.filter}')">${q.n}</button>`; }).join('');
+  const retry = key && wrong.length ? `<button class="btn pri block" onclick="retryWrong()">틀린 ${wrong.length}문제 다시 풀기</button>` : '';
+  const f = (k, l) => `<button class="${R.filter===k?'on':''}" onclick="location.replace('#/result/${id}/${hi}/${k}')">${l}</button>`;
+  paint(`<div class="bar"><div class="in"><button class="btn icon ghost" onclick="nav('#/')" aria-label="처음으로">${I.back}</button><span class="ttl">${name} 결과</span></div></div>
+  <div class="wrap" style="padding-top:14px">${top}
+  <div class="card"><div class="seg" style="margin-bottom:12px">${f('all','전체')}${key?f('wrong','틀린 것 '+wrong.length):''}${f('flag','표시 '+fl.length)}</div>
     <div class="grid">${cells || '<span class="note">해당 문제 없음</span>'}</div>
-    <div class="note" style="margin-top:8px">번호를 누르면 문제·내 답·선지별 해설이 열림.</div></div>
-  <div class="ex-btns">${retry}</div></div>`;
-  scrollTo(0,0);
+    <div class="note" style="margin-top:10px">번호를 누르면 문제·내 답·선지별 해설이 열림.</div></div>
+  ${retry}</div>`, true);
 }
-function copyAns(){ const t = document.querySelector('textarea'); t.select(); try { navigator.clipboard.writeText(t.value).then(() => alert('복사됨'), () => document.execCommand('copy')); } catch(e){ document.execCommand('copy'); } }
+function copyAns(){ const t = document.querySelector('textarea'); t.select(); try { navigator.clipboard.writeText(t.value).then(() => toast('복사됨'), () => document.execCommand('copy')); } catch(e){ document.execCommand('copy'); } }
 function retryWrong(){
   const h = load('hist:' + R.id, [])[R.hi], all = D[R.id];
   const list = h.only ? all.filter(q => h.only.includes(q.n)) : all;
   start(R.id, 'practice', list.filter(q => h.ans[q.n] !== q.a).map(q => q.n));
 }
-function review(n){
-  const h = load('hist:' + R.id, [])[R.hi], q = D[R.id].find(x => x.n === n), key = hasKey(R.id), my = h.ans[n];
+function review(id, hi, n, filter){
+  const h = load('hist:' + id, [])[hi]; if (!h || !D[id]) return home();
+  R = {id, hi, filter: filter || 'all'};
+  const q = D[id].find(x => x.n === n), key = hasKey(id), my = h.ans[n]; if (!q) return home();
   const opts = ['A','B','C'].map(k => {
     let c = 'opt'; if (key){ if (k === q.a) c += ' ok'; else if (k === my) c += ' bad'; } else if (k === my) c += ' sel';
     const tag = (k === my ? ' <span class="tag">내 답</span>' : '') + (key && k === q.a ? ' <span class="tag">정답</span>' : '');
     const fb = q.f && q.f[k] ? `<div class="fb ${k===q.a?'ok':''}"><div class="h">${k===q.a?'정답 해설':k+' 오답 이유'}</div>${rich(q.f[k])}</div>` : '';
     return `<div class="${c}" style="cursor:default"><span class="k">${k}</span><span>${esc(q.o[k]||'')}${tag}</span></div>${fb}`;
   }).join('');
-  const all = D[R.id], list = h.only ? all.filter(x => h.only.includes(x.n)) : all, idx = list.findIndex(x => x.n === n);
-  const res = key ? `<b class="${my===q.a?'ok-t':'bad-t'}">${my===q.a?'정답':my?'오답':'안 풂'}</b> · 정답 ${q.a}` : `내 답 ${my || '-'}`;
-  $('#app').innerHTML = `<div class="bar"><div class="in"><button class="btn sm" onclick="showResult('${R.id}',${R.hi},'${R.filter}')">결과로</button><span class="qno">Q${n}</span><span class="tag">${TN[topic(R.id,n)]}</span><span class="sp"></span>${res}</div></div>
-  <div class="wrap"><div class="card"><div class="stem">${rich(q.q)}</div></div>${opts}</div>
-  <div class="nav"><div class="in"><button class="btn" ${idx<=0?'disabled':''} onclick="review(${idx>0?list[idx-1].n:n})">이전</button><button class="btn" ${idx>=list.length-1?'disabled':''} onclick="review(${idx<list.length-1?list[idx+1].n:n})">다음</button></div></div>`;
-  scrollTo(0,0);
+  const all = D[id], list = h.only ? all.filter(x => h.only.includes(x.n)) : all, idx = list.findIndex(x => x.n === n);
+  const t = topic(id, n);
+  const res = key ? `<b class="${my===q.a?'ok-t':'bad-t'}">${my===q.a?'정답':my?'오답':'안 풂'}</b><span class="mut"> · 정답 ${q.a}</span>` : `<span class="mut">내 답 ${my || '-'}</span>`;
+  const go = j => `location.replace('#/review/${id}/${hi}/${list[j].n}/${R.filter}')`;
+  paint(`<div class="bar"><div class="in"><button class="btn icon ghost" onclick="location.replace('#/result/${id}/${hi}/${R.filter}')" aria-label="결과로">${I.back}</button><span class="qno">Q${n}</span><a class="tag tp-${t}" href="#/notes/${t}">${TN[t]} 노트 ›</a><span class="sp"></span>${res}</div></div>
+  <div class="wrap" style="padding-top:14px"><div class="card"><div class="stem">${rich(q.q)}</div></div>${opts}</div>
+  <div class="nav"><div class="in"><button class="btn" ${idx<=0?'disabled':''} onclick="${idx>0?go(idx-1):''}">이전</button><button class="btn" ${idx>=list.length-1?'disabled':''} onclick="${idx<list.length-1?go(idx+1):''}">다음</button></div></div>`);
 }
+
+/* ---------- notes data ---------- */
+let N = null, NP = null;
+function withNotes(cb){
+  if (N) return cb();
+  if (!NP) NP = fetch('notes.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(j => {
+    N = j.sort((a, b) => a.r - b.r);
+    N.forEach(n => { n.ix = [n.k, n.t, n.one, ...(n.los||[]), ...(n.sec||[]).flatMap(s => [s.h, ...s.b]), ...(n.fx||[]).flatMap(f => [f.n, f.f, f.d]), ...(n.trap||[]), ...(n.terms||[]).flat()].join('\n').toLowerCase(); });
+  });
+  NP.then(cb, () => { NP = null; paint(`<div class="wrap"><div class="empty"><b>노트를 불러오지 못함</b>인터넷 연결을 확인한 뒤 다시 시도.<br><br><button class="btn pri" onclick="route()">다시 시도</button></div></div>${tabbar('notes')}`); });
+}
+const noteBy = r => N && N.find(n => n.r === +r);
+const readMap = () => load('nread', {}), starMap = () => load('nstar', {});
+function inl(s){ return esc(s).replace(/`([^`]+)`/g, '<code>$1</code>'); }
+function hl(s, q){ let h = inl(s); if (!q) return h; const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'); return h.replace(/(<[^>]+>)|([^<]+)/g, (m, tag, txt) => tag || txt.replace(re, '<mark>$1</mark>')); }
+function snippet(n, q){
+  const src = [n.one, ...(n.sec||[]).flatMap(s => s.b), ...(n.trap||[]), ...(n.terms||[]).map(t => t.join(' — ')), ...(n.fx||[]).map(f => f.n + ': ' + f.f)];
+  const hit = src.find(s => s && s.toLowerCase().includes(q));
+  if (!hit) return '';
+  const i = hit.toLowerCase().indexOf(q), a = Math.max(0, i - 30);
+  return (a ? '…' : '') + hit.slice(a, a + 120);
+}
+
+/* ---------- notes list ---------- */
+let NQ = '';
+function notesList(f){
+  paint(`<div class="wrap"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>${tabbar('notes')}`, true);
+  withNotes(() => {
+    const rd = readMap(), sv = starMap(), last = load('nlast', null);
+    const cnt = t => N.filter(n => n.tp === t).length, rcnt = t => N.filter(n => n.tp === t && rd[n.r]).length;
+    const total = N.length, done = N.filter(n => rd[n.r]).length, starred = N.filter(n => sv[n.r]).length;
+    const chip = (k, label, c) => `<button class="chip ${f===k?'on':''} ${k.length<=3&&k!=='all'?'tp-'+k:''}" onclick="location.replace('#/notes/${k}')">${k!=='all'&&k!=='saved'?'<span class="dot"></span>':''}${label}<span class="c">${c}</span></button>`;
+    const chips = chip('all', '전체', total) + (starred ? chip('saved', '저장', starred) : '') + TORDER.filter(cnt).map(t => chip(t, TN[t], rcnt(t) + '/' + cnt(t))).join('');
+    const ln = last && noteBy(last);
+    paint(`<header class="apphead"><div class="eyebrow">SCHWESER NOTES 2026 · BOOK 1–4</div><div class="h1">요약 노트</div><p class="lead">Reading ${total}개 · 읽음 ${done}개</p></header>
+    <div class="wrap" style="padding-top:0">
+      <div class="search"><label class="sbox">${I.search}<input id="nq" type="text" placeholder="용어·공식·개념 검색 (예: duration, 이연법인세)" value="${esc(NQ)}" autocomplete="off" enterkeyhint="search"><button class="x" id="nqx" aria-label="지우기" style="${NQ?'':'display:none'}">✕</button></label>
+      <div class="chips" id="chips">${chips}</div></div>
+      ${ln && f === 'all' ? `<a id="cont" class="card cont tp-${ln.tp}" href="#/note/${ln.r}"><span class="ic">${I.resume}</span><span class="sp" style="min-width:0"><span class="eyebrow">이어 읽기 · R${ln.r} ${TN[ln.tp]}</span><br><b>${esc(ln.k)}</b></span>${I.chev}</a>` : ''}
+      <div id="nl"></div></div>${tabbar('notes')}`, true);
+    const inp = $('#nq'), x = $('#nqx');
+    let tmr; inp.oninput = () => { clearTimeout(tmr); tmr = setTimeout(() => { NQ = inp.value; x.style.display = NQ ? '' : 'none'; drawList(f); }, 120); };
+    x.onclick = e => { e.preventDefault(); NQ = ''; inp.value = ''; x.style.display = 'none'; drawList(f); inp.focus(); };
+    const oc = $('#chips .chip.on'); oc && oc.scrollIntoView({inline:'center', block:'nearest'});
+    drawList(f);
+  });
+}
+function drawList(f){
+  const rd = readMap(), sv = starMap(), q = NQ.trim().toLowerCase();
+  let items = N.filter(n => f === 'all' || (f === 'saved' ? sv[n.r] : n.tp === f));
+  if (q) items = items.filter(n => n.ix.includes(q));
+  const row = n => `<a class="item tp-${n.tp}" href="#/note/${n.r}"><span class="rno">${n.r}</span><span class="tx"><div class="k">${hl(n.k, q)}</div><div class="e">${hl(n.t, q)}</div>${q ? `<div class="snip">${hl(snippet(n, q), q)}</div>` : ''}</span><span class="st">${sv[n.r] ? `<span class="sv">${I.starOn}</span>` : ''}${rd[n.r] ? `<span class="rd" aria-label="읽음">${I.check}</span>` : ''}</span></a>`;
+  let html = '';
+  if (!items.length) html = `<div class="empty"><b>${q ? '‘' + esc(NQ) + '’ 결과 없음' : '저장한 노트 없음'}</b>${q ? '영문 용어나 다른 표현으로 검색.' : '노트 오른쪽 위 별을 누르면 여기 모임.'}</div>`;
+  else if (q || f === 'saved') html = `<div class="sect-t">${q ? '검색 결과' : '저장한 노트'}<span class="mut">${items.length}개</span></div><div class="glist">${items.map(row).join('')}</div>`;
+  else {
+    const g = TORDER.filter(t => items.some(n => n.tp === t));
+    html = g.map(t => { const its = items.filter(n => n.tp === t), r = its.filter(n => rd[n.r]).length; return `<div class="ghead tp-${t}"><span class="dot"></span><span class="n">${TFULL[t]}</span><span class="prog"><i style="width:${r/its.length*100}%"></i></span><span class="c">${r}/${its.length}</span></div><div class="glist">${its.map(row).join('')}</div>`; }).join('');
+  }
+  $('#nl').innerHTML = html;
+  const c = $('#cont'); if (c) c.style.display = q ? 'none' : '';
+}
+
+/* ---------- note reader ---------- */
+let spy = null;
+function noteView(r){
+  paint(`<div class="wrap"><div class="skel" style="height:120px;margin-top:20px"></div><div class="skel"></div><div class="skel"></div></div>`);
+  withNotes(() => {
+    const n = noteBy(r); if (!n) return nav('#/notes');
+    save('nlast', n.r);
+    const i = N.indexOf(n), pv = N[i-1], nx = N[i+1], sv = starMap()[n.r], rd = readMap()[n.r];
+    const fs = load('fs', 16); document.documentElement.style.setProperty('--nfs', fs + 'px');
+    const secs = [];
+    secs.push(['los', 'LOS', (n.los||[]).length, `<div class="blk prose"><ul class="los">${(n.los||[]).map(l => { const m = String(l).match(/^(?:LOS\s*)?(\d+\.[a-z])\s*[:.)]?\s*(.*)$/i); return `<li>${m ? `<span class="lc">${m[1]}</span><span>${inl(m[2])}</span>` : `<span>${inl(l)}</span>`}</li>`; }).join('')}</ul></div>`]);
+    secs.push(['core', '핵심 정리', (n.sec||[]).length, (n.sec||[]).map(s => `<div class="blk prose"><h3>${inl(s.h)}</h3><ul>${s.b.map(b => `<li>${inl(b)}</li>`).join('')}</ul></div>`).join('')]);
+    if ((n.fx||[]).length) secs.push(['fx', '공식', n.fx.length, n.fx.map((f, j) => fxCard(n, f, j, false)).join('')]);
+    if ((n.trap||[]).length) secs.push(['trap', '시험 함정', n.trap.length, n.trap.map(t => `<div class="trap"><span class="i">!</span><span>${inl(t)}</span></div>`).join('')]);
+    if ((n.terms||[]).length) secs.push(['terms', '용어', n.terms.length, `<div class="blk terms">${n.terms.map(t => `<div class="term"><span class="en">${inl(t[0])}</span><span class="ko">${inl(t[1]||'')}</span></div>`).join('')}</div>`]);
+    if ((n.chk||[]).length) secs.push(['chk', '자가 점검', n.chk.length, n.chk.map((c, j) => `<details class="qa"><summary><span class="q">Q${j+1}</span><span>${inl(c.q)}</span><span class="hint">답 보기</span></summary><div class="a">${inl(c.a)}</div></details>`).join('')]);
+    paint(`<div class="bar tp-${n.tp}"><div class="in">
+      <button class="btn icon ghost" onclick="history.length>1?history.back():nav('#/notes')" aria-label="뒤로">${I.back}</button>
+      <span class="ttl">R${n.r} · ${TN[n.tp]}</span><span class="sp"></span>
+      <span class="fsz"><button onclick="fsz(-1)" aria-label="글자 작게" style="font-size:12px">가</button><button onclick="fsz(1)" aria-label="글자 크게" style="font-size:16px">가</button></span>
+      <button class="btn icon ghost" id="stb" onclick="toggleStar(${n.r})" aria-label="저장" style="color:${sv?'var(--warn)':'inherit'}">${sv?I.starOn:I.star}</button>
+    </div></div>
+    <div class="wrap tp-${n.tp}">
+      <div class="nhead"><div class="ey"><span class="dot"></span>${TFULL[n.tp]} · Reading ${n.r}</div><h1>${esc(n.k)}</h1><div class="en">${esc(n.t)}</div></div>
+      <div class="gist"><div class="l">한눈에</div>${inl(n.one)}</div>
+      <nav class="jump" id="jump">${secs.map(s => `<a href="#" data-to="${s[0]}">${s[1]}${s[2]?` <span style="opacity:.6">${s[2]}</span>`:''}</a>`).join('')}</nav>
+      ${secs.map(s => `<section class="nsec" id="s-${s[0]}"><h2>${s[1]}</h2>${s[3]}</section>`).join('')}
+      <button class="done ${rd?'on':''}" id="dn" onclick="toggleRead(${n.r})">${rd?I.check+' 읽음 표시됨':I.circle+' 다 읽었음'}</button>
+      <div class="pn">${pv ? `<a href="#/note/${pv.r}" onclick="location.replace(this.href);return false"><div class="d">‹ 이전 R${pv.r}</div><div class="k">${esc(pv.k)}</div></a>` : '<span></span>'}${nx ? `<a class="nx" href="#/note/${nx.r}" onclick="location.replace(this.href);return false"><div class="d">다음 R${nx.r} ›</div><div class="k">${esc(nx.k)}</div></a>` : ''}</div>
+    </div>`);
+    const jump = $('#jump');
+    jump.onclick = e => { const a = e.target.closest('a'); if (!a) return; e.preventDefault(); $('#s-' + a.dataset.to).scrollIntoView({behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth'}); };
+    if (spy) spy.disconnect();
+    spy = new IntersectionObserver(es => {
+      es.forEach(e => { if (e.isIntersecting){ jump.querySelectorAll('a').forEach(a => a.classList.toggle('on', a.dataset.to === e.target.id.slice(2))); const on = jump.querySelector('.on'); on && jump.scrollTo({left: on.offsetLeft - 16, behavior:'smooth'}); } });
+    }, {rootMargin: '-120px 0px -60% 0px'});
+    document.querySelectorAll('.nsec').forEach(s => spy.observe(s));
+  });
+}
+function fxCard(n, f, j, link){
+  return `<div class="fx tp-${n.tp}"><div class="fxn">${inl(f.n)}<button class="cp" onclick="copyFx(this)" aria-label="공식 복사">${I.copy}</button></div><div class="fxf">${esc(f.f)}</div>${f.d ? `<div class="fxd">${inl(f.d)}</div>` : ''}${link ? `<a class="fxr" href="#/note/${n.r}"><span class="dot"></span>R${n.r} ${esc(n.k)}<span class="sp"></span>${I.chev}</a>` : ''}</div>`;
+}
+function copyFx(b){ const t = b.closest('.fx').querySelector('.fxf').textContent; try { navigator.clipboard.writeText(t).then(() => toast('공식 복사됨')); } catch(e){} }
+function fsz(d){ const v = Math.min(20, Math.max(14, load('fs', 16) + d)); save('fs', v); document.documentElement.style.setProperty('--nfs', v + 'px'); toast('글자 크기 ' + v); }
+function toggleStar(r){ const m = starMap(); if (m[r]) delete m[r]; else m[r] = 1; save('nstar', m); const b = $('#stb'); b.innerHTML = m[r] ? I.starOn : I.star; b.style.color = m[r] ? 'var(--warn)' : 'inherit'; toast(m[r] ? '저장함' : '저장 해제'); }
+function toggleRead(r){ const m = readMap(); if (m[r]) delete m[r]; else m[r] = Date.now(); save('nread', m); const b = $('#dn'); b.classList.toggle('on', !!m[r]); b.innerHTML = m[r] ? I.check + ' 읽음 표시됨' : I.circle + ' 다 읽었음'; if (m[r]) toast('읽음 표시함'); }
+
+/* ---------- formulas ---------- */
+let FQ = '';
+function fxList(f){
+  paint(`<div class="wrap"><div class="skel"></div><div class="skel"></div></div>${tabbar('fx')}`, true);
+  withNotes(() => {
+    const has = t => N.some(n => n.tp === t && (n.fx||[]).length);
+    const cnt = t => N.filter(n => t === 'all' || n.tp === t).reduce((s, n) => s + (n.fx||[]).length, 0);
+    const chip = k => `<button class="chip ${f===k?'on':''} ${k!=='all'?'tp-'+k:''}" onclick="location.replace('#/fx/${k}')">${k!=='all'?'<span class="dot"></span>':''}${k==='all'?'전체':TN[k]}<span class="c">${cnt(k)}</span></button>`;
+    paint(`<header class="apphead"><div class="eyebrow">시험장 가기 전 한 번 더</div><div class="h1">공식집</div><p class="lead">공식 ${cnt('all')}개 · 카드를 누르면 해당 노트로 이동</p></header>
+    <div class="wrap" style="padding-top:0"><div class="search"><label class="sbox">${I.search}<input id="fq" type="text" placeholder="공식 이름·기호 검색 (예: WACC, convexity)" value="${esc(FQ)}" autocomplete="off"></label>
+    <div class="chips">${chip('all')}${TORDER.filter(has).map(chip).join('')}</div></div><div id="fl"></div></div>${tabbar('fx')}`, true);
+    const inp = $('#fq'); let tmr; inp.oninput = () => { clearTimeout(tmr); tmr = setTimeout(() => { FQ = inp.value; drawFx(f); }, 120); };
+    const oc = document.querySelector('.chips .chip.on'); oc && oc.scrollIntoView({inline:'center', block:'nearest'});
+    drawFx(f);
+  });
+}
+function drawFx(f){
+  const q = FQ.trim().toLowerCase();
+  const ns = N.filter(n => (f === 'all' || n.tp === f) && (n.fx||[]).length);
+  let html = '';
+  ns.forEach(n => {
+    const fs = n.fx.filter(x => !q || (x.n + ' ' + x.f + ' ' + (x.d||'') + ' ' + n.k + ' ' + n.t).toLowerCase().includes(q));
+    if (!fs.length) return;
+    html += `<div class="ghead tp-${n.tp}"><span class="rno" style="width:30px;height:30px;font-size:12px">${n.r}</span><a class="n" href="#/note/${n.r}" style="text-decoration:none">${esc(n.k)}</a><span class="c" style="margin-left:auto">${fs.length}</span></div>` + fs.map((x, j) => fxCard(n, x, j, false)).join('');
+  });
+  $('#fl').innerHTML = html || `<div class="empty"><b>‘${esc(FQ)}’ 공식 없음</b>다른 이름이나 기호로 검색.</div>`;
+}
+
 document.addEventListener('visibilitychange', () => { if (document.hidden) persist(); });
-home();
+route();
 </script>
 <script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}</script>
 </body>

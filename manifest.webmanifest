@@ -1,12 +1,12 @@
 {
-  "name": "CFA L1 모의고사",
+  "name": "CFA L1 모의고사·노트",
   "short_name": "CFA L1",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f6f7f9",
-  "theme_color": "#1f5fbf",
+  "background_color": "#eef1f6",
+  "theme_color": "#1f4fd6",
   "lang": "ko",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
