@@ -1,6 +1,6 @@
 // Offline cache. Bump VERSION when files change.
-const VERSION = 'cfa-l1-v2';
-const ASSETS = ['./', 'index.html', 'notes.json', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
+const VERSION = 'cfa-l1-v3';
+const ASSETS = ['./', 'index.html', 'notes.json', 'concepts.json', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 const FONT_HOST = 'cdn.jsdelivr.net';
 
 self.addEventListener('install', e => {
