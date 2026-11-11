@@ -287,6 +287,23 @@ mark{background:color-mix(in srgb,var(--acc) 24%,transparent);color:inherit;bord
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (min-width:720px){.phead h1{font-size:42px}.nhero{border-radius:28px;margin:12px 0 0;padding:32px 30px}.nhero h1{font-size:40px}.art{padding:30px 32px}}
 
+/* PC: tab bar becomes left sidebar, wider content, centered sheets */
+@media (min-width:1024px) and (hover:hover){
+  .tabbar{top:0;bottom:0;right:auto;width:220px;padding:32px 12px;border-right:1px solid var(--well)}
+  .tabbar .in{flex-direction:column;gap:4px;max-width:none}
+  .tab{flex:none;flex-direction:row;gap:12px;padding:12px 14px;font-size:15px;justify-content:flex-start}
+  .tab:hover{background:var(--well2)}
+  .tab.on{background:var(--accfield)}
+  body:has(.tabbar) #app{padding-left:220px}
+  body:has(.tabbar) .wrap,body:has(.tabbar) .phead{max-width:920px}
+  body:has(.tabbar) .wrap{padding-bottom:64px}
+  .toast{bottom:40px}
+  body:has(.tabbar) .toast{left:calc(50% + 110px)}
+  .sheet{align-items:center;justify-content:center}
+  .sheet .pane{max-width:760px;border-radius:22px;padding-bottom:20px}
+  .grab{display:none}
+  .opt:hover,.cell:hover{filter:brightness(.97)}
+}
 </style>
 <meta name="theme-color" content="#eef1f6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b1018" media="(prefers-color-scheme: dark)">
@@ -365,6 +382,21 @@ function route(){
   return home();
 }
 addEventListener('hashchange', route);
+/* PC keyboard: A/B/C or 1/2/3 pick, arrows move, F flag, G list, Esc close */
+addEventListener('keydown', e => {
+  if (e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  const sh = $('#sh');
+  if (e.key === 'Escape' && sh){ sh.remove(); return; }
+  if (sh || !$('.qno') || !S) return;
+  const k = e.key.toUpperCase(), m = {A:'A',B:'B',C:'C','1':'A','2':'B','3':'C'}[k];
+  if (m) pick(m);
+  else if (e.key === 'ArrowRight' && S.i < qs().length-1) go(1);
+  else if (e.key === 'ArrowLeft' && S.i > 0) go(-1);
+  else if (k === 'F') toggleFlag();
+  else if (k === 'G') openGrid();
+  else return;
+  e.preventDefault();
+});
 function tabbar(on){
   const t = (k, h, label, ic) => `<button class="tab ${on===k?'on':''}" onclick="nav('${h}')" aria-current="${on===k?'page':'false'}">${ic}<span>${label}</span></button>`;
   return `<nav class="tabbar"><div class="in">${t('exam','#/','모의고사',I.exam)}${t('notes','#/notes','요약 노트',I.book)}${t('fx','#/fx','공식집',I.fx)}</div></nav>`;
