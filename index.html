@@ -259,6 +259,17 @@ mark{background:color-mix(in srgb,var(--acc) 24%,transparent);color:inherit;bord
 .trap{display:flex;gap:14px;padding:16px 18px;border-radius:20px;background:var(--warnfield);margin-bottom:10px;font-size:var(--nfs);line-height:1.75}
 .trap .i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--warn);color:var(--surface);display:grid;place-items:center;font-weight:900;font-size:14px;margin-top:.2em}
 .terms{background:var(--surface);border-radius:22px;padding:6px 20px}
+.hook{background:var(--tf);border-radius:18px;padding:14px 18px;margin:4px 0 16px}
+.hook .l{font-size:15px;font-weight:800;color:var(--tt);margin-bottom:4px}
+.hook>div:last-child{font-size:var(--nfs);line-height:1.75}
+.fig{margin:6px 0 18px;background:var(--well2);border-radius:18px;padding:16px 14px 12px}
+.fig svg{display:block;width:100%;max-width:520px;height:auto;margin:0 auto}
+.fig figcaption{font-size:14px;line-height:1.6;color:var(--mut);margin-top:10px;text-align:center}
+.fig text{fill:var(--ink);font-family:var(--ff);font-size:13px;letter-spacing:-.01em}
+.fig .tm{fill:var(--mut)}.fig .tb{font-weight:800}.fig .ti{fill:var(--surface)}
+.fig .c1{fill:var(--tt)}.fig .c2{fill:color-mix(in srgb,var(--tt) 55%,var(--surface))}.fig .c3{fill:color-mix(in srgb,var(--tt) 22%,var(--surface))}
+.fig .cw{fill:var(--warn)}.fig .ck{fill:var(--ok)}.fig .cb{fill:var(--bad)}
+.fig .ln{stroke:var(--mut);stroke-width:1.5;fill:none}.fig .ld{stroke-dasharray:5 4}.fig .la{stroke:var(--tt);stroke-width:2.5;fill:none}
 .te{font-size:.82em;color:var(--mut);margin-left:2px;font-weight:500;letter-spacing:0}
 .term{display:grid;grid-template-columns:minmax(130px,36%) 1fr;gap:14px;padding:13px 0;font-size:16px;line-height:1.6}
 .term+.term{box-shadow:inset 0 1px 0 var(--well)}
@@ -703,9 +714,12 @@ function secHTML(n, s, i){
   const los = (s.los||[]).map(l => `<span>LOS ${esc(l)}</span>`).join('');
   const seen = new Set(), t = x => en(inl(x), seen);
   const body = s.p ? s.p.map(p => `<p>${t(p)}</p>`).join('') : `<p>${(s.b||[]).map(t).join('</p><p>')}</p>`;
+  const hook = s.hook ? `<div class="hook"><div class="l">쉽게 말하면</div><div>${t(s.hook)}</div></div>` : '';
+  // fig.svg is authored in notes.json (trusted, same repo), so it is inserted as-is
+  const fig = s.fig ? `<figure class="fig">${s.fig.svg}${s.fig.cap ? `<figcaption>${inl(s.fig.cap)}</figcaption>` : ''}</figure>` : '';
   const ex = s.ex ? `<div class="ex"><div class="l">예시로 풀어 보기</div><div>${inl(s.ex)}</div></div>` : '';
   const key = (s.key||[]).length ? `<div class="key"><div class="l">꼭 기억할 것</div><ul>${s.key.map(k => `<li>${inl(k)}</li>`).join('')}</ul></div>` : '';
-  return `<article class="art" id="a-${i}" data-los="${esc((s.los||[]).join(' '))}">${los ? `<div class="lc">${los}</div>` : ''}<h3>${inl(s.h)}</h3>${body}${ex}${key}</article>`;
+  return `<article class="art" id="a-${i}" data-los="${esc((s.los||[]).join(' '))}">${los ? `<div class="lc">${los}</div>` : ''}<h3>${inl(s.h)}</h3>${hook}${body}${fig}${ex}${key}</article>`;
 }
 function noteView(r, losCode){
   paint(`<div class="wrap" style="padding-top:20px"><div class="skel" style="height:180px"></div><div class="skel"></div><div class="skel"></div></div>`);
