@@ -334,8 +334,8 @@ mark{background:color-mix(in srgb,var(--acc) 24%,transparent);color:inherit;bord
 <script>
 const D = JSON.parse(document.getElementById('data').textContent);
 const TP = JSON.parse(document.getElementById('topics').textContent);
-const TN = {ETH:'윤리',QM:'계량',ECO:'경제',FSA:'재무제표',CI:'기업이슈',EQ:'주식',FI:'채권',DER:'파생',ALT:'대체투자',PM:'포트폴리오',X:'미분류'};
-const TFULL = {ETH:'윤리·전문가 기준',QM:'계량 방법론',ECO:'경제학',CI:'기업 이슈',FSA:'재무제표 분석',EQ:'주식',FI:'채권',DER:'파생상품',ALT:'대체투자',PM:'포트폴리오 관리'};
+const TN = {ETH:'Ethics',QM:'Quant',ECO:'Economics',FSA:'FSA',CI:'Corporate Issuers',EQ:'Equity',FI:'Fixed Income',DER:'Derivatives',ALT:'Alternatives',PM:'Portfolio',X:'Other'};
+const TFULL = {ETH:'Ethical and Professional Standards',QM:'Quantitative Methods',ECO:'Economics',CI:'Corporate Issuers',FSA:'Financial Statement Analysis',EQ:'Equity Investments',FI:'Fixed Income',DER:'Derivatives',ALT:'Alternative Investments',PM:'Portfolio Management'};
 const TORDER = ['QM','ECO','CI','FSA','EQ','FI','DER','ALT','PM','ETH'];
 const EXAMS = [['ME3-1','모의고사 3회 1부'],['ME3-2','모의고사 3회 2부'],['ME4-1','모의고사 4회 1부'],['ME4-2','모의고사 4회 2부'],['ME5-1','모의고사 5회 1부'],['ME5-2','모의고사 5회 2부']];
 const LIMIT = 135*60;
