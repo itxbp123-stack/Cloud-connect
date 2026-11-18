@@ -259,6 +259,7 @@ mark{background:color-mix(in srgb,var(--acc) 24%,transparent);color:inherit;bord
 .trap{display:flex;gap:14px;padding:16px 18px;border-radius:20px;background:var(--warnfield);margin-bottom:10px;font-size:var(--nfs);line-height:1.75}
 .trap .i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--warn);color:var(--surface);display:grid;place-items:center;font-weight:900;font-size:14px;margin-top:.2em}
 .terms{background:var(--surface);border-radius:22px;padding:6px 20px}
+.te{font-size:.82em;color:var(--mut);margin-left:2px;font-weight:500;letter-spacing:0}
 .term{display:grid;grid-template-columns:minmax(130px,36%) 1fr;gap:14px;padding:13px 0;font-size:16px;line-height:1.6}
 .term+.term{box-shadow:inset 0 1px 0 var(--well)}
 .term .en{font-weight:750}
@@ -622,6 +623,31 @@ function withNotes(cb){
 const noteBy = r => N && N.find(n => n.r === +r);
 const readMap = () => load('nread', {}), starMap = () => load('nstar', {});
 function inl(s){ return esc(s == null ? '' : s).replace(/`([^`]+)`/g, '<code>$1</code>'); }
+/* English term after the first Korean mention, from every note's glossary (terms: [en, "ko: desc"]). */
+let EN = null;
+function enMap(){
+  if (EN) return EN;
+  const m = new Map();
+  N.forEach(n => (n.terms||[]).forEach(([en, d]) => {
+    const kos = String(d||'').split(':')[0].split(' / '), ens = String(en).split(' / ');
+    kos.forEach((ko, i) => { ko = ko.trim(); const e = (kos.length === ens.length ? ens[i] : en).trim();
+      if (ko.length > 1 && /[가-힣]/.test(ko) && !m.has(ko)) m.set(ko, e); });
+  }));
+  const keys = [...m.keys()].sort((a, b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  return EN = { m, re: keys.length ? new RegExp(`(?<![가-힣])(${keys.join('|')})`, 'g') : null };
+}
+// seen: Set shared across a section so each term gets its English once.
+// Skipped when the text already gives it: "term(English)" or the English word elsewhere in the paragraph.
+function en(html, seen){
+  const { m, re } = enMap(); if (!re) return html;
+  return html.replace(/(<code>.*?<\/code>|<[^>]+>)|([^<]+)/g, (x, tag, txt) => tag || txt.replace(re, (k, g, off) => {
+    if (seen.has(k)) return k; seen.add(k);
+    let e = m.get(k);
+    if (/^\s*\(/.test(txt.slice(off + k.length)) || txt.toLowerCase().includes(e.toLowerCase())) return k;
+    if (/^[A-Z][a-z]/.test(e)) e = e[0].toLowerCase() + e.slice(1);
+    return `${k}<span class="te">(${e})</span>`;
+  }));
+}
 function hl(s, q){ let h = inl(s); if (!q) return h; const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'); return h.replace(/(<[^>]+>)|([^<]+)/g, (m, tag, txt) => tag || txt.replace(re, '<mark>$1</mark>')); }
 function snippet(n, q){
   const src = [n.one, ...(n.sec||[]).flatMap(s => [...(s.p||[]), ...(s.b||[]), ...(s.key||[]), s.ex||'']), ...(n.trap||[]), ...(n.terms||[]).map(t => t.join(', ')), ...(n.fx||[]).map(f => f.n + ': ' + f.f)];
@@ -675,7 +701,8 @@ function drawList(f){
 let spy = null;
 function secHTML(n, s, i){
   const los = (s.los||[]).map(l => `<span>LOS ${esc(l)}</span>`).join('');
-  const body = s.p ? s.p.map(p => `<p>${inl(p)}</p>`).join('') : `<p>${(s.b||[]).map(inl).join('</p><p>')}</p>`;
+  const seen = new Set(), t = x => en(inl(x), seen);
+  const body = s.p ? s.p.map(p => `<p>${t(p)}</p>`).join('') : `<p>${(s.b||[]).map(t).join('</p><p>')}</p>`;
   const ex = s.ex ? `<div class="ex"><div class="l">예시로 풀어 보기</div><div>${inl(s.ex)}</div></div>` : '';
   const key = (s.key||[]).length ? `<div class="key"><div class="l">꼭 기억할 것</div><ul>${s.key.map(k => `<li>${inl(k)}</li>`).join('')}</ul></div>` : '';
   return `<article class="art" id="a-${i}" data-los="${esc((s.los||[]).join(' '))}">${los ? `<div class="lc">${los}</div>` : ''}<h3>${inl(s.h)}</h3>${body}${ex}${key}</article>`;
@@ -691,9 +718,10 @@ function noteView(r, losCode){
     const toc = (n.sec||[]).map((s, j) => `<a href="#" data-a="${j}"><span>${(s.los||[])[0] ? esc(s.los[0]) : j+1}</span>${inl(s.h)}</a>`).join('');
     secs.push(['core', '개념 설명', (n.sec||[]).length, `<div class="toc">${toc}</div><details class="los"><summary>이 Reading의 LOS ${(n.los||[]).length}개</summary><ul>${(n.los||[]).map(l => { const m = String(l).match(/^(?:LOS\s*)?(\d+\.[a-z])\s*[:.)]?\s*(.*)$/i); return `<li>${m ? `<b>${m[1]}</b><span>${inl(m[2])}</span>` : `<span>${inl(l)}</span>`}</li>`; }).join('')}</ul></details><div style="height:16px"></div>` + (n.sec||[]).map((s, j) => secHTML(n, s, j)).join('')]);
     if ((n.fx||[]).length) secs.push(['fx', '공식', n.fx.length, n.fx.map(f => fxCard(n, f)).join('')]);
-    if ((n.trap||[]).length) secs.push(['trap', '시험 함정', n.trap.length, n.trap.map(t => `<div class="trap"><span class="i">!</span><span>${inl(t)}</span></div>`).join('')]);
+    const ts = new Set(), cs = new Set();
+    if ((n.trap||[]).length) secs.push(['trap', '시험 함정', n.trap.length, n.trap.map(t => `<div class="trap"><span class="i">!</span><span>${en(inl(t), ts)}</span></div>`).join('')]);
     if ((n.terms||[]).length) secs.push(['terms', '용어', n.terms.length, `<div class="terms">${n.terms.map(t => `<div class="term"><span class="en">${inl(t[0])}</span><span class="ko">${inl(t[1]||'')}</span></div>`).join('')}</div>`]);
-    if ((n.chk||[]).length) secs.push(['chk', '자가 점검', n.chk.length, n.chk.map((c, j) => `<details class="qa"><summary><span class="q">Q${j+1}</span><span>${inl(c.q)}</span><span class="hint">답 보기</span></summary><div class="a">${inl(c.a)}</div></details>`).join('')]);
+    if ((n.chk||[]).length) secs.push(['chk', '자가 점검', n.chk.length, n.chk.map((c, j) => `<details class="qa"><summary><span class="q">Q${j+1}</span><span>${en(inl(c.q), cs)}</span><span class="hint">답 보기</span></summary><div class="a">${en(inl(c.a), cs)}</div></details>`).join('')]);
     paint(`<div class="rprog tp-${n.tp}" id="rp"></div><div class="bar tp-${n.tp}"><div class="in">
       <button class="btn icon ghost" onclick="history.length>1?history.back():nav('#/notes')" aria-label="뒤로">${I.back}</button>
       <span class="ttl">R${n.r} ${esc(n.k)}</span><span class="sp"></span>
