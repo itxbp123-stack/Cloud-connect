@@ -216,6 +216,17 @@ mark{background:color-mix(in srgb,var(--acc) 24%,transparent);color:inherit;bord
 .jump::-webkit-scrollbar{display:none}
 .jump a{flex:none;text-decoration:none;font-size:15px;font-weight:700;color:var(--ink2);padding:8px 15px;border-radius:999px;background:var(--surface)}
 .jump a.on{color:var(--acc-ink);background:var(--acc)}
+.jtoc{position:sticky;left:0;z-index:1;box-shadow:0 0 0 8px var(--ground);flex:none;display:flex;align-items:center;gap:6px;border:0;font:inherit;font-size:15px;font-weight:800;color:var(--tt);background:var(--tf);padding:8px 14px 8px 11px;border-radius:999px;cursor:pointer}
+.jtoc svg{width:18px;height:18px}
+.side{display:none}
+.sheet .side{display:block}
+.side .sh{font-size:13px;font-weight:800;color:var(--mut);padding:4px 12px 8px}
+.side a{display:flex;gap:10px;align-items:baseline;text-decoration:none;color:var(--ink2);border-radius:12px;padding:8px 12px;font-size:15px;line-height:1.45;font-weight:600}
+.side a.sg{color:var(--ink);font-weight:800;margin-top:6px}
+.side a span{flex:none;min-width:38px;font-size:13px;font-weight:750;color:var(--tt);font-variant-numeric:tabular-nums}
+.side a small{margin-left:auto;padding-left:8px;font-size:13px;font-weight:650;color:var(--mut)}
+.side a:hover{background:var(--well2)}
+.side a.on{background:var(--tf);color:var(--ink)}
 .nsec{scroll-margin-top:calc(124px + env(safe-area-inset-top));margin-top:40px}
 .nsec>h2{font-size:24px;font-weight:850;letter-spacing:-.035em;margin:0 0 14px;display:flex;align-items:baseline;gap:10px}
 .nsec>h2 small{font-size:15px;font-weight:650;color:var(--mut);letter-spacing:0}
@@ -239,8 +250,12 @@ mark{background:color-mix(in srgb,var(--acc) 24%,transparent);color:inherit;bord
 .art h3{font-size:22px;line-height:1.35;font-weight:850;letter-spacing:-.03em;margin:0 0 14px}
 .art p{font-size:var(--nfs);line-height:1.85;margin:0 0 16px;color:var(--ink)}
 .art code,.fx .fd code,.trap code,.qa code{font-family:inherit;font-weight:700;background:var(--well);padding:1px 6px;border-radius:6px;font-variant-numeric:tabular-nums}
-.ex{background:var(--well2);border-radius:18px;padding:16px 18px;margin:6px 0 16px}
-.ex .l{font-size:15px;font-weight:800;margin-bottom:6px;color:var(--ink)}
+.ex{background:var(--well2);border-radius:18px;margin:6px 0 16px}
+.ex summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 18px;font-size:15px;font-weight:800;color:var(--ink)}
+.ex summary::-webkit-details-marker{display:none}
+.ex summary .hint{margin-left:auto;font-size:13px;font-weight:750;color:var(--tt);background:var(--tf);border-radius:99px;padding:3px 11px}
+.ex[open] summary .hint{font-size:0;padding:3px 8px}.ex[open] summary .hint::after{content:"접기";font-size:13px}
+.ex>div{padding:0 18px 16px}
 .ex div{font-size:calc(var(--nfs) - 1px);line-height:1.8;color:var(--ink2);white-space:pre-wrap;font-variant-numeric:tabular-nums}
 .key{background:var(--tf);border-radius:18px;padding:14px 18px}
 .key .l{font-size:15px;font-weight:800;color:var(--tt);margin-bottom:6px}
@@ -298,6 +313,17 @@ mark{background:color-mix(in srgb,var(--acc) 24%,transparent);color:inherit;bord
 @keyframes rise{from{opacity:0;transform:translateY(14px)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (min-width:720px){.phead h1{font-size:42px}.nhero{border-radius:28px;margin:12px 0 0;padding:32px 30px}.nhero h1{font-size:40px}.art{padding:30px 32px}}
+
+/* Wide screens: note reader gets a sticky table of contents on the left */
+@media (min-width:1100px){
+  .nlay{display:grid;grid-template-columns:260px minmax(0,1fr);gap:40px;max-width:1240px;margin:0 auto;padding:0 32px}
+  .nlay>.wrap{max-width:none;width:100%;margin:0;padding-left:0;padding-right:0}
+  .nlay .side{display:block;position:sticky;top:calc(64px + env(safe-area-inset-top));align-self:start;max-height:calc(100vh - 80px);overflow-y:auto;padding:20px 0 40px;scrollbar-width:thin}
+  .nlay .jump,.nlay .toc{display:none}
+  .nlay .art,.nlay .nsec{scroll-margin-top:80px}
+  .nbar .in{max-width:1176px}
+  .nlay .art p,.nlay .hook>div:last-child{max-width:46em}
+}
 
 /* PC: tab bar becomes left sidebar, wider content, centered sheets */
 @media (min-width:1024px) and (hover:hover){
@@ -360,6 +386,7 @@ const I = {
   circle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/></svg>',
   copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></svg>',
   resume:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M10 7.5l4 3-4 3z" fill="currentColor"/></svg>',
+  menu:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>',
   grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg>',
   flag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 21V4M6 4h11l-2.5 4L17 12H6"/></svg>',
 };
@@ -717,7 +744,7 @@ function secHTML(n, s, i){
   const hook = s.hook ? `<div class="hook"><div class="l">쉽게 말하면</div><div>${t(s.hook)}</div></div>` : '';
   // fig.svg is authored in notes.json (trusted, same repo), so it is inserted as-is
   const fig = s.fig ? `<figure class="fig">${s.fig.svg}${s.fig.cap ? `<figcaption>${inl(s.fig.cap)}</figcaption>` : ''}</figure>` : '';
-  const ex = s.ex ? `<div class="ex"><div class="l">예시로 풀어 보기</div><div>${inl(s.ex)}</div></div>` : '';
+  const ex = s.ex ? `<details class="ex"><summary>예시로 풀어 보기<span class="hint">펼치기</span></summary><div>${inl(s.ex)}</div></details>` : '';
   const key = (s.key||[]).length ? `<div class="key"><div class="l">꼭 기억할 것</div><ul>${s.key.map(k => `<li>${inl(k)}</li>`).join('')}</ul></div>` : '';
   return `<article class="art" id="a-${i}" data-los="${esc((s.los||[]).join(' '))}">${los ? `<div class="lc">${los}</div>` : ''}<h3>${inl(s.h)}</h3>${hook}${body}${fig}${ex}${key}</article>`;
 }
@@ -736,28 +763,42 @@ function noteView(r, losCode){
     if ((n.trap||[]).length) secs.push(['trap', '시험 함정', n.trap.length, n.trap.map(t => `<div class="trap"><span class="i">!</span><span>${en(inl(t), ts)}</span></div>`).join('')]);
     if ((n.terms||[]).length) secs.push(['terms', '용어', n.terms.length, `<div class="terms">${n.terms.map(t => `<div class="term"><span class="en">${inl(t[0])}</span><span class="ko">${inl(t[1]||'')}</span></div>`).join('')}</div>`]);
     if ((n.chk||[]).length) secs.push(['chk', '자가 점검', n.chk.length, n.chk.map((c, j) => `<details class="qa"><summary><span class="q">Q${j+1}</span><span>${en(inl(c.q), cs)}</span><span class="hint">답 보기</span></summary><div class="a">${en(inl(c.a), cs)}</div></details>`).join('')]);
-    paint(`<div class="rprog tp-${n.tp}" id="rp"></div><div class="bar tp-${n.tp}"><div class="in">
+    const side = `<div class="sh">목차</div><a href="#" data-go="s-core" class="sg">개념 설명<small>${(n.sec||[]).length}</small></a>`
+      + (n.sec||[]).map((s, j) => `<a href="#" data-go="a-${j}" class="si"><span>${(s.los||[])[0] ? esc(s.los[0]) : j+1}</span>${inl(s.h)}</a>`).join('')
+      + secs.slice(1).map(s => `<a href="#" data-go="s-${s[0]}" class="sg">${s[1]}<small>${s[2]}</small></a>`).join('');
+    paint(`<div class="rprog tp-${n.tp}" id="rp"></div><div class="bar nbar tp-${n.tp}"><div class="in">
       <button class="btn icon ghost" onclick="history.length>1?history.back():nav('#/notes')" aria-label="뒤로">${I.back}</button>
       <span class="ttl">R${n.r} ${esc(n.k)}</span><span class="sp"></span>
       <span class="fsz"><button onclick="fsz(-1)" aria-label="글자 작게" style="font-size:13px">가</button><button onclick="fsz(1)" aria-label="글자 크게" style="font-size:18px">가</button></span>
       <button class="btn icon ghost" id="stb" onclick="toggleStar(${n.r})" aria-label="저장" style="color:${sv?'var(--warn)':'inherit'}">${sv?I.starOn:I.star}</button>
     </div></div>
-    <div class="wrap tp-${n.tp}">
+    <div class="nlay tp-${n.tp}"><nav class="side" id="side" aria-label="목차">${side}</nav><div class="wrap">
       <div class="nhero rise"><div class="sub"><span class="dot"></span>${TFULL[n.tp]}, Reading ${n.r}</div><h1>${esc(n.k)}</h1><div class="en">${esc(n.t)}</div><p class="one">${inl(n.one)}</p></div>
-      <nav class="jump" id="jump">${secs.map(s => `<a href="#" data-to="${s[0]}">${s[1]} ${s[2]}</a>`).join('')}</nav>
+      <nav class="jump" id="jump"><button class="jtoc" onclick="tocSheet()">${I.menu}목차</button>${secs.map(s => `<a href="#" data-to="${s[0]}">${s[1]} ${s[2]}</a>`).join('')}</nav>
       ${secs.map(s => `<section class="nsec" id="s-${s[0]}"><h2>${s[1]}<small>${s[2]}</small></h2>${s[3]}</section>`).join('')}
       <button class="done ${rd?'on':''}" id="dn" onclick="toggleRead(${n.r})">${rd?I.check+' 읽음 표시됨':I.circle+' 다 읽었음'}</button>
       <div class="pn">${pv ? `<a href="#/note/${pv.r}" onclick="location.replace(this.href);return false"><div class="d">‹ 이전 R${pv.r}</div><div class="k">${esc(pv.k)}</div></a>` : '<span></span>'}${nx ? `<a class="nx" href="#/note/${nx.r}" onclick="location.replace(this.href);return false"><div class="d">다음 R${nx.r} ›</div><div class="k">${esc(nx.k)}</div></a>` : ''}</div>
-    </div>`);
+    </div></div>`);
     const smooth = matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth';
     const jump = $('#jump');
     jump.onclick = e => { const a = e.target.closest('a'); if (!a) return; e.preventDefault(); $('#s-' + a.dataset.to).scrollIntoView({behavior: smooth}); };
     document.querySelector('.toc').onclick = e => { const a = e.target.closest('a'); if (!a) return; e.preventDefault(); $('#a-' + a.dataset.a).scrollIntoView({behavior: smooth}); };
+    const sd = $('#side');
+    sd.onclick = goSec;
     if (spy) spy.disconnect();
     spy = new IntersectionObserver(es => {
-      es.forEach(e => { if (e.isIntersecting){ jump.querySelectorAll('a').forEach(a => a.classList.toggle('on', a.dataset.to === e.target.id.slice(2))); const on = jump.querySelector('.on'); on && jump.scrollTo({left: on.offsetLeft - 20, behavior: smooth}); } });
+      es.forEach(e => {
+        if (!e.isIntersecting) return;
+        const id = e.target.id;
+        if (id.startsWith('s-')){ jump.querySelectorAll('a').forEach(a => a.classList.toggle('on', a.dataset.to === id.slice(2))); const on = jump.querySelector('.on'); on && jump.scrollTo({left: on.offsetLeft - jump.querySelector('.jtoc').offsetWidth - 28, behavior: smooth}); }
+        // side list: an article wins over its parent section, so the core section only marks itself before the first article
+        if (id === 's-core' && sd.querySelector('.si.on')) return;
+        sd.querySelectorAll('a').forEach(a => a.classList.toggle('on', a.dataset.go === id));
+        const a = sd.querySelector('.on');
+        if (a && (a.offsetTop < sd.scrollTop + 40 || a.offsetTop > sd.scrollTop + sd.clientHeight - 60)) sd.scrollTop = a.offsetTop - sd.clientHeight / 3;
+      });
     }, {rootMargin: '-130px 0px -60% 0px'});
-    document.querySelectorAll('.nsec').forEach(s => spy.observe(s));
+    document.querySelectorAll('.nsec, .art').forEach(s => spy.observe(s));
     const rp = $('#rp');
     onscroll = () => { if (!rp.isConnected){ onscroll = null; return; } const h = document.documentElement.scrollHeight - innerHeight; rp.style.width = (h > 0 ? scrollY / h * 100 : 0) + '%'; };
     if (losCode){
@@ -766,6 +807,19 @@ function noteView(r, losCode){
       setTimeout(() => { go.scrollIntoView(); if (t){ t.classList.add('hit'); setTimeout(() => t.classList.remove('hit'), 2400); } }, 60);
     }
   });
+}
+function goSec(e){
+  const a = e.target.closest('a[data-go]'); if (!a) return; e.preventDefault();
+  $('#sh') && $('#sh').remove();
+  $('#' + a.dataset.go).scrollIntoView({behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth'});
+}
+// Mobile: same list as the desktop sidebar, in a bottom sheet
+function tocSheet(){
+  const d = document.createElement('div'); d.className = 'sheet'; d.id = 'sh';
+  d.onclick = e => { if (e.target === d) d.remove(); else goSec(e); };
+  d.innerHTML = `<div class="pane"><div class="in"><div class="grab"></div><nav class="side">${$('#side').innerHTML}</nav></div></div>`;
+  document.body.appendChild(d);
+  const on = d.querySelector('.on'); on && on.scrollIntoView({block: 'center'});
 }
 function fxCard(n, f, link){
   return `<div class="fx tp-${n.tp}"><div class="fn">${inl(f.n)}<button class="cp" onclick="copyFx(this)" aria-label="공식 복사">${I.copy}</button></div><div class="ff">${esc(f.f)}</div>${f.d ? `<div class="fd">${inl(f.d)}</div>` : ''}</div>`;
