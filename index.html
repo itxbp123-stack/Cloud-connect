@@ -216,6 +216,12 @@ mark{background:color-mix(in srgb,var(--acc) 24%,transparent);color:inherit;bord
 .jump::-webkit-scrollbar{display:none}
 .jump a{flex:none;text-decoration:none;font-size:15px;font-weight:700;color:var(--ink2);padding:8px 15px;border-radius:999px;background:var(--surface)}
 .jump a.on{color:var(--acc-ink);background:var(--acc)}
+.again-card{display:flex;align-items:center;gap:12px;margin-top:16px}
+.again-card .t{font-size:17px;font-weight:800}
+.again-card .m{font-size:14px;color:var(--mut);margin-top:2px}
+.again-done{text-align:center;padding:32px 20px}
+.again-done b{display:block;font-size:20px;margin-bottom:8px}
+.again-done p{color:var(--ink2);margin:6px 0 16px}
 .jtoc{position:sticky;left:0;z-index:1;box-shadow:0 0 0 8px var(--ground);flex:none;display:flex;align-items:center;gap:6px;border:0;font:inherit;font-size:15px;font-weight:800;color:var(--tt);background:var(--tf);padding:8px 14px 8px 11px;border-radius:999px;cursor:pointer}
 .jtoc svg{width:18px;height:18px}
 .side{display:none}
@@ -414,6 +420,7 @@ function route(){
   if (v === 'exam'){ if (S) return render(); return nav('#/'); }
   stopTimer();
   if (v === 'result') return showResult(p[1], +p[2], p[3]);
+  if (v === 'again') return againStart();
   if (v === 'review') return review(p[1], +p[2], +p[3], p[4]);
   if (v === 'notes') return notesList(p[1] || 'all');
   if (v === 'note') return noteView(+p[1], p[2]);
@@ -426,6 +433,7 @@ addEventListener('keydown', e => {
   if (e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
   const sh = $('#sh');
   if (e.key === 'Escape' && sh){ sh.remove(); return; }
+  if (!sh && AG && $('.again')){ const m = {A:'A',B:'B',C:'C','1':'A','2':'B','3':'C'}[e.key.toUpperCase()]; if (m){ againPick(m); e.preventDefault(); } else if (e.key === 'Enter' && AG.pick){ AG.i++; AG.pick = null; AG.before = null; again(); e.preventDefault(); } return; }
   if (sh || !$('.qno') || !S) return;
   const k = e.key.toUpperCase(), m = {A:'A',B:'B',C:'C','1':'A','2':'B','3':'C'}[k];
   if (m) pick(m);
@@ -480,11 +488,14 @@ function home(){
     weak = `<h2 class="stitle">과목별 정답률<small>낮은 과목부터, 누르면 노트로</small></h2><div class="card weak">${ts.map(t => { const p = Math.round(by[t].ok/by[t].n*100); return `<a href="#/notes/${t}" class="tp-${t}"><span class="dot"></span><span>${TN[t]}</span><span class="bar"><i style="width:${p}%"></i></span><span class="p ${p<50?'bad-t':p>=70?'ok-t':''}">${p}%</span></a>`; }).join('')}</div>`;
   }
   const lastNote = load('nlast', null);
+  const rq = rqLoad(), rqN = Object.keys(rq).length, due = rqDue().length;
+  const nextDue = Object.values(rq).map(x => x.due).sort((a, b) => a - b)[0];
+  const rqCard = rqN ? `<div class="card again-card rise"><div class="sp"><div class="t">오답 복습</div><div class="m">${due ? `오늘 ${due}문제` : `다음 복습 ${new Date(nextDue).getMonth()+1}/${new Date(nextDue).getDate()}`}, 대기 ${rqN}문제</div></div>${due ? `<button class="btn pri" onclick="nav('#/again')">복습 시작</button>` : ''}</div>` : '';
   const lead = resumeId
     ? (() => { const c = load('cur:' + resumeId); const nm = EXAMS.find(e => e[0] === resumeId)[1]; return `<div class="lead-card rise"><div class="t">${nm} 이어서 풀기</div><div class="m">${Object.keys(c.ans).length}/${D[resumeId].length}문제 풀었고 ${fmt(c.used)} 썼음</div><button class="btn" onclick="resume('${resumeId}')">이어 풀기</button></div>`; })()
     : '';
   paint(`<header class="phead"><h1>CFA 1차 모의고사</h1><p>실전 모드는 135분 뒤 채점, 연습 모드는 한 문제씩 바로 해설과 관련 개념을 보여 줌.</p></header>
-  <div class="wrap">${lead}
+  <div class="wrap">${lead}${rqCard}
   ${lastNote ? `<a class="card cont" id="hcont" href="#/note/${lastNote}" style="margin-top:16px"><span class="sp"><span class="s">요약 노트 이어 읽기</span><br><span class="k" data-ntitle>Reading ${lastNote}</span></span>${I.chev}</a>` : ''}
   ${weak}<h2 class="stitle">회차</h2>${rows}
   <p class="note" style="margin-top:20px">기록은 이 기기 브라우저에만 저장됨. 5회는 정답표가 없어 답만 기록됨(결과 화면에서 복사해 Claude에 보내면 채점).</p></div>${tabbar('exam')}`);
@@ -551,7 +562,9 @@ function render(){
 function pick(k){
   const q = qs()[S.i];
   if (S.mode === 'practice' && S.ans[q.n] && hasKey(S.id)) return;
-  S.ans[q.n] = k; persist(); const y = scrollY; render(); scrollTo(0, S.mode === 'practice' ? y : 0);
+  S.ans[q.n] = k; persist();
+  if (S.mode === 'practice' && hasKey(S.id) && k !== q.a) rqMiss(S.id, q.n);
+  const y = scrollY; render(); scrollTo(0, S.mode === 'practice' ? y : 0);
 }
 function toggleFlag(){ const q = qs()[S.i]; S.flag[q.n] = !S.flag[q.n]; if (!S.flag[q.n]) delete S.flag[q.n]; persist(); const y = scrollY; render(); scrollTo(0,y); }
 function go(d){ S.i = Math.min(qs().length-1, Math.max(0, S.i + d)); persist(); render(); }
@@ -581,6 +594,7 @@ function submit(force){
   const d = new Date();
   const rec = {date: (d.getMonth()+1) + '/' + d.getDate(), mode: S.mode, used: Math.round(S.used), score, total: list.length, ans: S.ans, flag: S.flag, only: S.only};
   const hist = load('hist:' + S.id, []); hist.push(rec); save('hist:' + S.id, hist);
+  if (key && S.mode !== 'practice') list.forEach(q => { if (S.ans[q.n] && S.ans[q.n] !== q.a) rqMiss(S.id, q.n); }); // practice misses were queued on pick
   drop('cur:' + S.id);
   const id = S.id; S = null; location.replace('#/result/' + id + '/' + (hist.length - 1));
 }
@@ -624,6 +638,65 @@ function retryWrong(){
   const h = load('hist:' + R.id, [])[R.hi], all = D[R.id];
   const list = h.only ? all.filter(q => h.only.includes(q.n)) : all;
   start(R.id, 'practice', list.filter(q => h.ans[q.n] !== q.a).map(q => q.n));
+}
+/* ---------- wrong-answer review queue ----------
+   rq = {"ME3-1#12": {b, due, w}}: b = box 0..2, due = local-midnight ms, w = times missed.
+   Miss -> box 0, back tomorrow. Hit -> next box (3 days, then 7 days); a hit in box 2 graduates. */
+const RQ_DAYS = [1, 3, 7];
+const dayAt = n => { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime() + n * 864e5; };
+function rqLoad(){
+  let q = load('rq', null);
+  if (!q){ // first run: past mistakes from every graded attempt are due today
+    q = {};
+    EXAMS.forEach(([id]) => { if (!hasKey(id)) return; load('hist:' + id, []).forEach(h => Object.entries(h.ans).forEach(([n, a]) => {
+      const x = D[id].find(z => z.n === +n); if (x && a !== x.a) q[id + '#' + n] = {b: 0, due: dayAt(0), w: ((q[id + '#' + n] || {}).w || 0) + 1};
+    })); });
+    save('rq', q);
+  }
+  return q;
+}
+function rqMiss(id, n){ if (!hasKey(id)) return; const q = rqLoad(), k = id + '#' + n; q[k] = {b: 0, due: dayAt(1), w: ((q[k] || {}).w || 0) + 1}; save('rq', q); }
+function rqDue(){
+  const q = rqLoad(), now = Date.now();
+  return Object.keys(q).filter(k => { const [id, n] = k.split('#'); return q[k].due <= now && D[id] && D[id].some(z => z.n === +n); }).sort((a, b) => q[a].due - q[b].due);
+}
+let AG = null; // current review session: {list, i, pick}
+function againStart(){ AG = {list: rqDue(), i: 0, pick: null, ok: 0}; again(); }
+function again(){
+  if (!AG) return againStart();
+  if (AG.i >= AG.list.length){
+    const q = rqLoad(), next = Object.values(q).map(x => x.due).sort((a, b) => a - b)[0];
+    const when = next ? new Date(next) : null;
+    paint(`<div class="bar"><div class="in"><button class="btn icon ghost" onclick="nav('#/')" aria-label="홈으로">${I.back}</button><span class="qno">오답 복습</span></div></div>
+    <div class="wrap" style="padding-top:12px"><div class="card again-done"><b>${AG.list.length ? '오늘 복습 끝' : '오늘 복습할 문제 없음'}</b>
+    ${AG.list.length ? `<p>${AG.list.length}문제 중 ${AG.ok}문제 맞힘. 틀린 문제는 내일 다시 나와요.</p>` : ''}
+    <p>${when ? `대기 중 ${Object.keys(q).length}문제, 다음 복습 ${when.getMonth()+1}/${when.getDate()}` : '복습함이 비어 있어요. 모의고사에서 틀린 문제가 여기 쌓여요.'}</p>
+    <button class="btn pri" onclick="nav('#/')">홈으로</button></div></div>`);
+    return;
+  }
+  const k = AG.list[AG.i], [id, ns] = k.split('#'), n = +ns, x = D[id].find(z => z.n === n), my = AG.pick;
+  const now = rqLoad()[k], ent = AG.before || now || {b: 0, w: 1}, t = topic(id, n), name = (EXAMS.find(e => e[0] === id) || [, id])[1];
+  const opts = ['A','B','C'].map(o => {
+    let c = 'opt'; if (my){ if (o === x.a) c += ' ok'; else if (o === my) c += ' bad'; }
+    const fb = my && x.f && x.f[o] ? `<div class="fb ${o===x.a?'ok':''}"><div class="h">${o===x.a?'정답 해설':o+' 오답 이유'}</div>${rich(x.f[o])}</div>` : '';
+    return `<button class="${c}" onclick="againPick('${o}')"><span class="k">${o}</span><span>${esc(x.o[o] || '')}</span></button>${fb}`;
+  }).join('');
+  const res = my ? `<div class="verdict ${my===x.a?'ok-t':'bad-t'}">${my===x.a ? (now ? `정답, ${RQ_DAYS[now.b]}일 뒤 다시 나와요` : '정답, 복습 졸업') : '오답, 정답은 ' + x.a + '. 내일 다시 나와요'}</div>` : '';
+  paint(`<div class="bar"><div class="in"><button class="btn icon ghost" onclick="AG=null;nav('#/')" aria-label="그만하기">${I.back}</button>
+    <span class="qno">${AG.i+1}<span class="mut" style="font-weight:600"> / ${AG.list.length}</span></span><span class="tag tp-${t}">${TN[t]}</span><span class="sp"></span><span class="note">${esc(name)} Q${n}, ${ent.w}번 틀림</span></div>
+    <div class="pbar"><i style="width:${AG.i/AG.list.length*100}%"></i></div></div>
+  <div class="wrap again" style="padding-top:12px"><div class="card"><div class="stem">${rich(x.q)}</div></div>${res}${opts}<div id="cbox">${my ? conceptBox(id, n) : ''}</div></div>
+  ${my ? `<div class="nav"><div class="in"><button class="btn pri" onclick="AG.i++;AG.pick=null;AG.before=null;again()">${AG.i === AG.list.length-1 ? '끝내기' : '다음'}</button></div></div>` : ''}`);
+  if (my && !CQ) withNotes(() => { const b = $('#cbox'); if (b && AG && AG.list[AG.i] === k) b.innerHTML = conceptBox(id, n); });
+}
+function againPick(o){
+  if (!AG || AG.pick) return;
+  const k = AG.list[AG.i], [id, ns] = k.split('#'), x = D[id].find(z => z.n === +ns), q = rqLoad(), e = q[k] || {b: 0, w: 1};
+  AG.pick = o; AG.before = e;
+  if (o === x.a){ AG.ok++; if (e.b >= RQ_DAYS.length - 1) delete q[k]; else q[k] = {...e, b: e.b + 1, due: dayAt(RQ_DAYS[e.b + 1])}; }
+  else q[k] = {b: 0, due: dayAt(1), w: e.w + 1};
+  save('rq', q);
+  const y = scrollY; again(); scrollTo(0, y);
 }
 function review(id, hi, n, filter){
   const h = load('hist:' + id, [])[hi]; if (!h || !D[id]) return home();
