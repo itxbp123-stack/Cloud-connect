@@ -216,6 +216,9 @@ mark{background:color-mix(in srgb,var(--acc) 24%,transparent);color:inherit;bord
 .jump::-webkit-scrollbar{display:none}
 .jump a{flex:none;text-decoration:none;font-size:15px;font-weight:700;color:var(--ink2);padding:8px 15px;border-radius:999px;background:var(--surface)}
 .jump a.on{color:var(--acc-ink);background:var(--acc)}
+.drill{display:flex;align-items:center;gap:10px;margin-top:14px;padding:14px 18px;border-radius:16px;background:var(--accfield);color:var(--acc);font-weight:800;font-size:16px;text-decoration:none}
+.drill span{margin-left:auto;font-size:14px;font-weight:700;opacity:.85}
+.drill:hover{filter:brightness(.97)}
 .again-card{display:flex;align-items:center;gap:12px;margin-top:16px}
 .again-card .t{font-size:17px;font-weight:800}
 .again-card .m{font-size:14px;color:var(--mut);margin-top:2px}
@@ -421,6 +424,7 @@ function route(){
   stopTimer();
   if (v === 'result') return showResult(p[1], +p[2], p[3]);
   if (v === 'again') return againStart();
+  if (v === 'drill') return drillStart(+p[1], +p[2]);
   if (v === 'review') return review(p[1], +p[2], +p[3], p[4]);
   if (v === 'notes') return notesList(p[1] || 'all');
   if (v === 'note') return noteView(+p[1], p[2]);
@@ -660,10 +664,29 @@ function rqDue(){
   const q = rqLoad(), now = Date.now();
   return Object.keys(q).filter(k => { const [id, n] = k.split('#'); return q[k].due <= now && D[id] && D[id].some(z => z.n === +n); }).sort((a, b) => q[a].due - q[b].due);
 }
-let AG = null; // current review session: {list, i, pick}
+let AG = null; // current session: {list, i, pick, ok, drill?}; drill = practice from a note section, not the queue
 function againStart(){ AG = {list: rqDue(), i: 0, pick: null, ok: 0}; again(); }
+// graded mock questions linked (concepts.json) to a note section's LOS
+function relQ(n, s){
+  return Object.keys(CQ || {}).filter(k => { const c = CQ[k], [id, q] = k.split('#'); return c.r === n.r && (s.los||[]).includes(c.los) && hasKey(id) && D[id] && D[id].some(z => z.n === +q); });
+}
+function drillStart(r, i){
+  withNotes(() => {
+    const n = noteBy(r), s = n && n.sec[i]; if (!s) return nav('#/notes');
+    AG = {list: relQ(n, s), i: 0, pick: null, ok: 0, drill: {r, h: s.h, back: '#/note/' + r + '/' + encodeURIComponent((s.los||[])[0] || '')}};
+    again();
+  });
+}
 function again(){
   if (!AG) return againStart();
+  const dr = AG.drill;
+  if (dr && AG.i >= AG.list.length){
+    paint(`<div class="bar"><div class="in"><button class="btn icon ghost" onclick="location.replace('${dr.back}')" aria-label="노트로">${I.back}</button><span class="qno">관련 문제</span></div></div>
+    <div class="wrap" style="padding-top:12px"><div class="card again-done"><b>${AG.list.length}문제 중 ${AG.ok}문제 맞힘</b><p>${esc(dr.h)}</p>
+    ${AG.list.length - AG.ok ? `<p>틀린 ${AG.list.length - AG.ok}문제는 오답 복습함에 넣었어요. 내일 다시 나와요.</p>` : ''}
+    <button class="btn pri" onclick="location.replace('${dr.back}')">노트로 돌아가기</button></div></div>`);
+    return;
+  }
   if (AG.i >= AG.list.length){
     const q = rqLoad(), next = Object.values(q).map(x => x.due).sort((a, b) => a - b)[0];
     const when = next ? new Date(next) : null;
@@ -681,9 +704,11 @@ function again(){
     const fb = my && x.f && x.f[o] ? `<div class="fb ${o===x.a?'ok':''}"><div class="h">${o===x.a?'정답 해설':o+' 오답 이유'}</div>${rich(x.f[o])}</div>` : '';
     return `<button class="${c}" onclick="againPick('${o}')"><span class="k">${o}</span><span>${esc(x.o[o] || '')}</span></button>${fb}`;
   }).join('');
-  const res = my ? `<div class="verdict ${my===x.a?'ok-t':'bad-t'}">${my===x.a ? (now ? `정답, ${RQ_DAYS[now.b]}일 뒤 다시 나와요` : '정답, 복습 졸업') : '오답, 정답은 ' + x.a + '. 내일 다시 나와요'}</div>` : '';
-  paint(`<div class="bar"><div class="in"><button class="btn icon ghost" onclick="AG=null;nav('#/')" aria-label="그만하기">${I.back}</button>
-    <span class="qno">${AG.i+1}<span class="mut" style="font-weight:600"> / ${AG.list.length}</span></span><span class="tag tp-${t}">${TN[t]}</span><span class="sp"></span><span class="note">${esc(name)} Q${n}, ${ent.w}번 틀림</span></div>
+  const verdict = dr ? (my === x.a ? '정답' : `오답, 정답은 ${x.a}. 오답 복습함에 넣었어요`)
+    : my === x.a ? (now ? `정답, ${RQ_DAYS[now.b]}일 뒤 다시 나와요` : '정답, 복습 졸업') : `오답, 정답은 ${x.a}. 내일 다시 나와요`;
+  const res = my ? `<div class="verdict ${my===x.a?'ok-t':'bad-t'}">${verdict}</div>` : '';
+  paint(`<div class="bar"><div class="in"><button class="btn icon ghost" onclick="${dr ? `location.replace('${dr.back}')` : `AG=null;nav('#/')`}" aria-label="그만하기">${I.back}</button>
+    <span class="qno">${AG.i+1}<span class="mut" style="font-weight:600"> / ${AG.list.length}</span></span><span class="tag tp-${t}">${TN[t]}</span><span class="sp"></span><span class="note">${esc(name)} Q${n}${dr ? '' : `, ${ent.w}번 틀림`}</span></div>
     <div class="pbar"><i style="width:${AG.i/AG.list.length*100}%"></i></div></div>
   <div class="wrap again" style="padding-top:12px"><div class="card"><div class="stem">${rich(x.q)}</div></div>${res}${opts}<div id="cbox">${my ? conceptBox(id, n) : ''}</div></div>
   ${my ? `<div class="nav"><div class="in"><button class="btn pri" onclick="AG.i++;AG.pick=null;AG.before=null;again()">${AG.i === AG.list.length-1 ? '끝내기' : '다음'}</button></div></div>` : ''}`);
@@ -693,6 +718,7 @@ function againPick(o){
   if (!AG || AG.pick) return;
   const k = AG.list[AG.i], [id, ns] = k.split('#'), x = D[id].find(z => z.n === +ns), q = rqLoad(), e = q[k] || {b: 0, w: 1};
   AG.pick = o; AG.before = e;
+  if (AG.drill){ if (o === x.a) AG.ok++; else rqMiss(id, +ns); const y = scrollY; again(); scrollTo(0, y); return; }
   if (o === x.a){ AG.ok++; if (e.b >= RQ_DAYS.length - 1) delete q[k]; else q[k] = {...e, b: e.b + 1, due: dayAt(RQ_DAYS[e.b + 1])}; }
   else q[k] = {b: 0, due: dayAt(1), w: e.w + 1};
   save('rq', q);
@@ -819,7 +845,9 @@ function secHTML(n, s, i){
   const fig = s.fig ? `<figure class="fig">${s.fig.svg}${s.fig.cap ? `<figcaption>${inl(s.fig.cap)}</figcaption>` : ''}</figure>` : '';
   const ex = s.ex ? `<details class="ex"><summary>예시로 풀어 보기<span class="hint">펼치기</span></summary><div>${inl(s.ex)}</div></details>` : '';
   const key = (s.key||[]).length ? `<div class="key"><div class="l">꼭 기억할 것</div><ul>${s.key.map(k => `<li>${inl(k)}</li>`).join('')}</ul></div>` : '';
-  return `<article class="art" id="a-${i}" data-los="${esc((s.los||[]).join(' '))}">${los ? `<div class="lc">${los}</div>` : ''}<h3>${inl(s.h)}</h3>${hook}${body}${fig}${ex}${key}</article>`;
+  const rq = relQ(n, s).length;
+  const drill = rq ? `<a class="drill" href="#/drill/${n.r}/${i}">관련 문제 풀기<span>모의고사 ${rq}문제</span></a>` : '';
+  return `<article class="art" id="a-${i}" data-los="${esc((s.los||[]).join(' '))}">${los ? `<div class="lc">${los}</div>` : ''}<h3>${inl(s.h)}</h3>${hook}${body}${fig}${ex}${key}${drill}</article>`;
 }
 function noteView(r, losCode){
   paint(`<div class="wrap" style="padding-top:20px"><div class="skel" style="height:180px"></div><div class="skel"></div><div class="skel"></div></div>`);
